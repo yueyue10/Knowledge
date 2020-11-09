@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body style="background: #3F89F2;">
+		<!-- ==============红心============== -->
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+			<defs>
+				<rect id="a" y="54" width="60" height="25" rx="1" />
+				<mask id="b" x="0" y="0" width="60" height="25" fill="#fff">
+					<use xlink:href="#a" />
+				</mask>
+			</defs>
+			<g transform="translate(-9 -56)" fill="none" fill-rule="evenodd">
+				<use stroke="#EDEEEF" mask="url(#b)" stroke-width="2" xlink:href="#a" />
+				<path d="M19.05 62.797c-.208-.268-1.776-2.188-3.629-1.725-.662.165-1.439.44-2.009 1.463-2.18 3.913 4.965 8.983 5.615 9.433V72l.023-.016.023.016v-.032c.65-.45 7.795-5.52 5.615-9.433-.57-1.023-1.347-1.298-2.009-1.463-1.853-.463-3.42 1.457-3.629 1.725z"
+				 fill="red" />
+			</g>
+		</svg>
+		
+		<!-- ==============波浪图============== -->
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="auto">
+			<g fill="rgba(255,255,255,0.07)">
+				<path d="M 0 70 Q 75 39, 150 70 T 300 70 T 450 70 T 600 70 T 750 70 V 100 H 0 V 0"></path>
+				<animateTransform attributeName="transform" attributeType="XML" type="translate" from="0" to="-300" dur="2.5s"
+				 repeatCount="indefinite"></animateTransform>
+			</g>
+			<g fill="rgba(255,255,255,0.07)">
+				<path d="M 0 70 Q 87.5 47, 175 70 T 350 70 T 525 70 T 700 70 T 875 70 T 1050 70 V 100 H 0 V 0"></path>
+				<animateTransform attributeName="transform" attributeType="XML" type="translate" from="0" to="-350" dur="4s"
+				 repeatCount="indefinite"></animateTransform>
+			</g>
+			<g fill="rgba(255,255,255,0.07)" transform="translate(-903.868 0)">
+				<path d="M 0 70 Q 135 36, 270 70 T 540 70 T 810 70 T 1080 70 V 100 H 0 V 0" transform="translate(-38.232284367796474, 0)"></path>
+				<animateTransform attributeName="transform" attributeType="XML" type="translate" from="0" to="-540" dur="3s"
+				 repeatCount="indefinite"></animateTransform>
+			</g>
+		</svg>
+		
+		<!-- svg转base64：https://www.css-js.com/tools/base64.html -->
+		<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAiPg0KCQkJPGcgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA3KSI+DQoJCQkJPHBhdGggZD0iTSAwIDcwIFEgNzUgMzksIDE1MCA3MCBUIDMwMCA3MCBUIDQ1MCA3MCBUIDYwMCA3MCBUIDc1MCA3MCBWIDEwMCBIIDAgViAwIj48L3BhdGg+DQoJCQkJPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiBhdHRyaWJ1dGVUeXBlPSJYTUwiIHR5cGU9InRyYW5zbGF0ZSIgZnJvbT0iMCIgdG89Ii0zMDAiIGR1cj0iMi41cyINCgkJCQkgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiPjwvYW5pbWF0ZVRyYW5zZm9ybT4NCgkJCTwvZz4NCgkJCTxnIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNykiPg0KCQkJCTxwYXRoIGQ9Ik0gMCA3MCBRIDg3LjUgNDcsIDE3NSA3MCBUIDM1MCA3MCBUIDUyNSA3MCBUIDcwMCA3MCBUIDg3NSA3MCBUIDEwNTAgNzAgViAxMDAgSCAwIFYgMCI+PC9wYXRoPg0KCQkJCTxhbmltYXRlVHJhbnNmb3JtIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSIgYXR0cmlidXRlVHlwZT0iWE1MIiB0eXBlPSJ0cmFuc2xhdGUiIGZyb209IjAiIHRvPSItMzUwIiBkdXI9IjRzIg0KCQkJCSByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSI+PC9hbmltYXRlVHJhbnNmb3JtPg0KCQkJPC9nPg0KCQkJPGcgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA3KSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTkwMy44NjggMCkiPg0KCQkJCTxwYXRoIGQ9Ik0gMCA3MCBRIDEzNSAzNiwgMjcwIDcwIFQgNTQwIDcwIFQgODEwIDcwIFQgMTA4MCA3MCBWIDEwMCBIIDAgViAwIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzguMjMyMjg0MzY3Nzk2NDc0LCAwKSI+PC9wYXRoPg0KCQkJCTxhbmltYXRlVHJhbnNmb3JtIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSIgYXR0cmlidXRlVHlwZT0iWE1MIiB0eXBlPSJ0cmFuc2xhdGUiIGZyb209IjAiIHRvPSItNTQwIiBkdXI9IjNzIg0KCQkJCSByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSI+PC9hbmltYXRlVHJhbnNmb3JtPg0KCQkJPC9nPg0KCQk8L3N2Zz4=" alt="图片Base64编码" style="width:100%; max-height:2000px;"/>
+	
+	</body>
+</html>

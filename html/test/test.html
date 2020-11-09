@@ -1,0 +1,303 @@
+"<html>
+	<head>
+		<meta http-equiv="Server" content="HuaweiCloudWAF">
+	</head>
+	<body>
+		<noscript>
+			<h1><strong>Please Enable JavaScript and Cookie.</strong></h1>
+		</noscript>
+		<h1> <span id="open_cookie" /> </h1>
+		<script type="text/javascript">
+			(function(t, a, c) {
+				"function" === typeof window.define && window.define.amd ? window.define(c) : "undefined" !== typeof module &&
+					module.exports ? module.exports = c() : a.exports ? a.exports = c() : a[t] = c()
+			})("fe", this, function() {
+					var t = function(a) {
+						if (!(this instanceof t)) return new t(a);
+						this.options = this.extend(a, {
+							swfContainerId: "fingerprintjs2",
+							swfPath: "flash/compiled/FontList.swf",
+							detectScreenOrientation: !0,
+							sortPluginsFor: [/palemoon/i],
+							userDefinedFonts: []
+						});
+						this.nativeForEach = Array.prototype.forEach;
+						this.nativeMap = Array.prototype.map
+					};
+					t.prototype = {
+							extend: function(a, c) {
+								if (null == a) return c;
+								for (var b in a) null != a[b] && c[b] !== a[b] && (c[b] = a[b]);
+								return c
+							},
+							get: function(a) {
+								var c = this,
+									b = {
+										data: [],
+										addPreprocessedComponent: function(a) {
+											var b = a.value;
+											"function" === typeof c.options.preprocessor && (b = c.options.preprocessor(a.key, b));
+											this.data.push({
+												key: a.key,
+												value: b
+											})
+										}
+									},
+									b = this.userAgentKey(b),
+									b = this.languageKey(b),
+									b = this.colorDepthKey(b),
+									b = this.deviceMemoryKey(b),
+									b = this.pixelRatioKey(b),
+									b = this.hardwareConcurrencyKey(b),
+									b = this.screenResolutionKey(b),
+									b = this.availableScreenResolutionKey(b),
+									b = this.timezoneOffsetKey(b),
+									b = this.platformKey(b),
+									b = this.pluginsKey(b),
+									b = this.canvasKey(b),
+									b = this.webglKey(b),
+									b = this.webglVendorAndRendererKey(b),
+									b = this.adBlockKey(b),
+									b = this.hasLiedLanguagesKey(b),
+									b = this.hasLiedResolutionKey(b),
+									b = this.hasLiedOsKey(b),
+									b = this.hasLiedBrowserKey(b),
+									b = this.touchSupportKey(b);
+								this.fontsKey(b, function(b) {
+									var e = c.x64hash128("", 31);
+									return a(e, b.data)
+								})
+							},
+							userAgentKey: function(a) {
+								this.options.excludeUserAgent ? a.addPreprocessedComponent({
+									key: "user_agent",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "user_agent",
+									value: this.getUserAgent()
+								});
+								return a
+							},
+							getUserAgent: function() {
+								return null != navigator.userAgent ? navigator.userAgent : "unknown"
+							},
+							languageKey: function(a) {
+								this.options.excludeLanguage ? a.addPreprocessedComponent({
+									key: "language",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "language",
+									value: navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage ||
+										"unknown"
+								});
+								return a
+							},
+							colorDepthKey: function(a) {
+								this.options.excludeColorDepth ?
+									a.addPreprocessedComponent({
+										key: "color_depth",
+										value: "unknown"
+									}) : a.addPreprocessedComponent({
+										key: "color_depth",
+										value: window.screen.colorDepth || -1
+									});
+								return a
+							},
+							deviceMemoryKey: function(a) {
+								this.options.excludeDeviceMemory ? a.addPreprocessedComponent({
+									key: "device_memory",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "device_memory",
+									value: this.getDeviceMemory()
+								});
+								return a
+							},
+							getDeviceMemory: function() {
+								return navigator.deviceMemory || -1
+							},
+							pixelRatioKey: function(a) {
+								this.options.excludePixelRatio ? a.addPreprocessedComponent({
+									key: "pixel_ratio",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "pixel_ratio",
+									value: this.getPixelRatio()
+								});
+								return a
+							},
+							getPixelRatio: function() {
+								return window.devicePixelRatio || "unknown"
+							},
+							screenResolutionKey: function(a) {
+								if (this.options.excludeScreenResolution) a.addPreprocessedComponent({
+									key: "resolution",
+									value: "unknown"
+								});
+								else return this.getScreenResolution(a);
+								return a
+							},
+							getScreenResolution: function(a) {
+								var c;
+								c = this.options.detectScreenOrientation ? window.screen.height > window.screen.width ? [window.screen.height,
+									window.screen.width
+								] : [window.screen.width, window.screen.height] : [window.screen.width, window.screen.height];
+								null != c ? a.addPreprocessedComponent({
+									key: "resolution",
+									value: c
+								}) : a.addPreprocessedComponent({
+									key: "resolution",
+									value: "unknown"
+								});
+								return a
+							},
+							availableScreenResolutionKey: function(a) {
+								if (this.options.excludeAvailableScreenResolution) a.addPreprocessedComponent({
+									key: "available_resolution",
+									value: "unknown"
+								});
+								else return this.getAvailableScreenResolution(a);
+								return a
+							},
+							getAvailableScreenResolution: function(a) {
+								var c = null;
+								window.screen.availWidth &&
+									window.screen.availHeight && (c = this.options.detectScreenOrientation ? window.screen.availHeight > window.screen
+										.availWidth ? [window.screen.availHeight, window.screen.availWidth] : [window.screen.availWidth, window.screen
+											.availHeight
+										] : [window.screen.availHeight, window.screen.availWidth]);
+								null != c ? a.addPreprocessedComponent({
+									key: "available_resolution",
+									value: c
+								}) : a.addPreprocessedComponent({
+									key: "available_resolution",
+									value: "unknown"
+								});
+								return a
+							},
+							timezoneOffsetKey: function(a) {
+								this.options.excludeTimezoneOffset ? a.addPreprocessedComponent({
+									key: "timezone_offset",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "timezone_offset",
+									value: (new Date).getTimezoneOffset()
+								});
+								return a
+							},
+							platformKey: function(a) {
+								this.options.excludePlatform ? a.addPreprocessedComponent({
+									key: "navigator_platform",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "navigator_platform",
+									value: this.getNavigatorPlatform()
+								});
+								return a
+							},
+							canvasKey: function(a) {
+								!this.options.excludeCanvas && this.isCanvasSupported() ? a.addPreprocessedComponent({
+									key: "canvas",
+									value: this.getCanvasFp() || "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "canvas",
+									value: "unknown"
+								});
+								return a
+							},
+							webglKey: function(a) {
+								!this.options.excludeWebGL && this.isWebGlSupported() ? a.addPreprocessedComponent({
+									key: "webgl",
+									value: this.getWebglFp() || "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "webgl",
+									value: "unknown"
+								});
+								return a
+							},
+							webglVendorAndRendererKey: function(a) {
+								!this.options.excludeWebGLVendorAndRenderer && this.isWebGlSupported() ? a.addPreprocessedComponent({
+									key: "webgl_vendor",
+									value: this.getWebglVendorAndRenderer() || "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "webgl_vendor",
+									value: "unknown"
+								});
+								return a
+							},
+							adBlockKey: function(a) {
+								this.options.excludeAdBlock ? a.addPreprocessedComponent({
+									key: "adblock",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "adblock",
+									value: this.getAdBlock()
+								});
+								return a
+							},
+							hasLiedLanguagesKey: function(a) {
+								this.options.excludeHasLiedLanguages ? a.addPreprocessedComponent({
+									key: "has_lied_languages",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "has_lied_languages",
+									value: this.getHasLiedLanguages()
+								});
+								return a
+							},
+							hasLiedResolutionKey: function(a) {
+								this.options.excludeHasLiedResolution ?
+									a.addPreprocessedComponent({
+										key: "has_lied_resolution",
+										value: "unknown"
+									}) : a.addPreprocessedComponent({
+										key: "has_lied_resolution",
+										value: this.getHasLiedResolution()
+									});
+								return a
+							},
+							hasLiedOsKey: function(a) {
+								this.options.excludeHasLiedOs ? a.addPreprocessedComponent({
+									key: "has_lied_os",
+									value: "unknown"
+								}) : a.addPreprocessedComponent({
+									key: "has_lied_os",
+									value: this.getHasLiedOs()
+								});
+								return a
+							},
+							hasLiedBrowserKey: function(a) {
+								this.options.excludeHasLiedBrowser ? a.addPreprocessedComponent({
+										key: "has_lied_browser",
+										value: "unknown"
+									}) :
+									a.addPreprocessedComponent({
+										key: "has_lied_browser",
+										value: this.getHasLiedBrowser()
+									});
+								return a
+							},
+							fontsKey: function(a, c) {
+								return this.options.excludeJsFonts ? this.flashFontsKey(a, c) || "unknown" : this.jsFontsKey(a, c) ||
+									"unknown"
+							},
+							flashFontsKey: function(a, c) {
+								if (this.options.excludeFlashFonts || !this.hasSwfObjectLoaded() || !this.hasMinFlashInstalled() ||
+									"undefined" === typeof this.options.swfPath) return c(a);
+								this.loadSwfAndDetectFonts(function(b) {
+									a.addPreprocessedComponent({
+										key: "swf_fonts",
+										value: b.join(";")
+									});
+									c(a)
+								})
+							},
+							jsFontsKey: function(a, c) {
+									var b = this;
+									return setTimeout(function() {
+												var l = ["monospace", "sans-serif", "serif"],
+													e =
+													"Andale Mono;Arial;Arial Black;Arial Hebrew;Arial MT;Arial Narrow;Arial Rounded MT Bold;Arial Unicode MS;Bitstream Vera Sans Mono;Book Antiqua;Bookman Old Style;Calibri;Cambria;Cambria Math;Century;Century Gothic;Century Schoolbook;Comic Sans;Comic Sans MS;Consolas;Courier;Courier New;Garamond;Geneva;Georgia;Helvetica;Helvetica Neue;Impact;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;LUCIDA GRANDE;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Microsoft Sans Serif;Monaco;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Sans Serif;MS Serif;MYRIAD;MYRIAD PRO;Palatino;Palatino Linotype;Segoe Print;Segoe Script;Segoe UI;Segoe UI Light;Segoe UI Semibold;Segoe UI Symbol;Tahoma;Times;Times New Roman;Times New Roman PS;Trebuchet MS;Verdana;Wingdings;Wingdings 2;Wingdings 3"
+													.split(";"),
+													g =
+													"Abadi MT Condensed Light;Academy Engraved LET;ADOBE CASLON PRO;Adobe Garamond;ADOBE GARAMOND PRO;Agency FB;Aharoni;Albertus Extra Bold;Albertus Medium;Algerian;Amazone BT;American Typewriter;American Typewriter Condensed;AmerType Md BT;Andalus;Angsana New;AngsanaUPC;Antique Olive;Aparajita;Apple Chancery;Apple Color Emoji;Apple SD Gothic Neo;Arabic Typesetting;ARCHER;ARNO PRO;Arrus BT;Aurora Cn BT;AvantGarde Bk BT;AvantGarde Md BT;AVENIR;Ayuthaya;Bandy;Bangla Sangam MN;Bank Gothic;BankGothic Md BT;Baskerville;Baskerville Old Face;Batang;BatangChe;Bauer Bodoni;Bauhaus 93;Bazooka;Bell MT;Bembo;Benguiat Bk BT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;BernhardFashion BT;BernhardMod BT;Big Caslon;BinnerD;Blackadder ITC;BlairMdITC TT;Bodoni 72;Bodoni 72 Oldstyle;Bodoni 72 Smallcaps;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Bookshelf Symbol 7;Boulder;Bradley Hand;Bradley Hand ITC;Bremen Bd BT;Britannic Bold;Broadway;Browallia New;BrowalliaUPC;Brush Script MT;Californian FB;Calisto MT;Calligrapher;Candara;CaslonOpnface BT;Castellar;Centaur;Cezanne;CG Omega;CG Times;Chalkboard;Chalkboard SE;Chalkduster;Charlesworth;Charter Bd BT;Charter BT;Chaucer;ChelthmITC Bk BT;Chiller;Clarendon;Clarendon Condensed;CloisterBlack BT;Cochin;Colonna MT;Constantia;Cooper Black;Copperplate;Copperplate Gothic;Copperplate Gothic Bold;Copperplate Gothic Light;CopperplGoth Bd BT;Corbel;Cordia New;CordiaUPC;Cornerstone;Coronet;Cuckoo;Curlz MT;DaunPenh;Dauphin;David;DB LCD Temp;DELICIOUS;Denmark;DFKai-SB;Didot;DilleniaUPC;DIN;DokChampa;Dotum;DotumChe;Ebrima;Edwardian Script ITC;Elephant;English 111 Vivace BT;Engravers MT;EngraversGothic BT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;EucrosiaUPC;Euphemia;Euphemia UCAS;EUROSTILE;Exotc350 Bd BT;FangSong;Felix Titling;Fixedsys;FONTIN;Footlight MT Light;Forte;FrankRuehl;Fransiscan;Freefrm721 Blk BT;FreesiaUPC;Freestyle Script;French Script MT;FrnkGothITC Bk BT;Fruitger;FRUTIGER;Futura;Futura Bk BT;Fut…"

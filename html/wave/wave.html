@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>波浪测试</title>
+	</head>
+	<body>
+		<h2>Pure Css Wave</h2>
+		<style type="text/css">
+			body {
+				position: relative;
+				-webkit-box-align: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: #76daff;
+				overflow: hidden;
+			}
+
+			body:before,
+			body:after {
+				content: "";
+				position: absolute;
+				left: 50%;
+				min-width: 300vw;
+				min-height: 300vw;
+				background-color: #fff;
+				-webkit-animation-name: rotate;
+				animation-name: rotate;
+				-webkit-animation-iteration-count: infinite;
+				animation-iteration-count: infinite;
+				-webkit-animation-timing-function: linear;
+				animation-timing-function: linear;
+			}
+
+			body:before {
+				bottom: 15vh;
+				border-radius: 45%;
+				-webkit-animation-duration: 10s;
+				animation-duration: 10s;
+			}
+
+			body:after {
+				bottom: 12vh;
+				opacity: .5;
+				border-radius: 47%;
+				-webkit-animation-duration: 10s;
+				animation-duration: 10s;
+			}
+
+			@-webkit-keyframes rotate {
+				0% {
+					-webkit-transform: translate(-50%, 0) rotateZ(0deg);
+					transform: translate(-50%, 0) rotateZ(0deg);
+				}
+
+				50% {
+					-webkit-transform: translate(-50%, -2%) rotateZ(180deg);
+					transform: translate(-50%, -2%) rotateZ(180deg);
+				}
+
+				100% {
+					-webkit-transform: translate(-50%, 0%) rotateZ(360deg);
+					transform: translate(-50%, 0%) rotateZ(360deg);
+				}
+			}
+
+			@keyframes rotate {
+				0% {
+					-webkit-transform: translate(-50%, 0) rotateZ(0deg);
+					transform: translate(-50%, 0) rotateZ(0deg);
+				}
+
+				50% {
+					-webkit-transform: translate(-50%, -2%) rotateZ(180deg);
+					transform: translate(-50%, -2%) rotateZ(180deg);
+				}
+
+				100% {
+					-webkit-transform: translate(-50%, 0%) rotateZ(360deg);
+					transform: translate(-50%, 0%) rotateZ(360deg);
+				}
+			}
+
+			h2 {
+				position: relative;
+				color: #333;
+				z-index: 10;
+				text-align: center;
+				height: 100vh;
+				line-height: 140vh;
+				font-size: 8vw;
+				text-shadow: 3px 3px 2px #999;
+			}
+		</style>
+	</body>
+</html>

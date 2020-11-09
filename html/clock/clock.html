@@ -1,0 +1,460 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>纯css时钟动态效果代码</title>
+
+		<style>
+			body {
+				width: 98%;
+				height: 98vh;
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				background-image: -webkit-linear-gradient(left, #a9d4d5 10%, #b2e6e7 10%, 12%, #a9d4d5 12%, #a9d4d5 20%, #b2e6e7 20%, 22%, #a9d4d5 22%, #a9d4d5 30%, #b2e6e7 30%, 32%, #a9d4d5 32%, #a9d4d5 40%, #b2e6e7 40%, 42%, #a9d4d5 42%, #a9d4d5 50%, #b2e6e7 50%, 52%, #a9d4d5 52%, #a9d4d5 60%, #b2e6e7 60%, 62%, #a9d4d5 62%, #a9d4d5 70%, #b2e6e7 70%, 72%, #a9d4d5 72%, #a9d4d5 80%, #b2e6e7 80%, 82%, #a9d4d5 82%, #a9d4d5 90%, #b2e6e7 90%, 92%, #a9d4d5 92%);
+				background-image: linear-gradient(to right, #a9d4d5 10%, #b2e6e7 10%, 12%, #a9d4d5 12%, #a9d4d5 20%, #b2e6e7 20%, 22%, #a9d4d5 22%, #a9d4d5 30%, #b2e6e7 30%, 32%, #a9d4d5 32%, #a9d4d5 40%, #b2e6e7 40%, 42%, #a9d4d5 42%, #a9d4d5 50%, #b2e6e7 50%, 52%, #a9d4d5 52%, #a9d4d5 60%, #b2e6e7 60%, 62%, #a9d4d5 62%, #a9d4d5 70%, #b2e6e7 70%, 72%, #a9d4d5 72%, #a9d4d5 80%, #b2e6e7 80%, 82%, #a9d4d5 82%, #a9d4d5 90%, #b2e6e7 90%, 92%, #a9d4d5 92%);
+			}
+
+			.face {
+				position: relative;
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+				-webkit-box-align: start;
+				-ms-flex-align: start;
+				align-items: flex-start;
+				width: 400px;
+				height: 400px;
+				background: #eee;
+				background-image: -webkit-linear-gradient(top left, #eee, #f5f5f5);
+				background-image: linear-gradient(to bottom right, #eee, #f5f5f5);
+				border-radius: 50%;
+				padding: 20px;
+				border: 20px solid #d9d9d9;
+				box-shadow: 20px 20px 30px -10px rgba(0, 0, 0, 0.4), inset 10px 10px 20px rgba(0, 0, 0, 0.2);
+			}
+
+			.face:after {
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				content: "";
+				border-radius: 50%;
+				z-index: 9999;
+				background-image: -webkit-linear-gradient(top left, rgba(255, 255, 255, 0) 0%, 59%, rgba(255, 255, 255, 0.7) 60%, rgba(255, 255, 255, 0) 80%), -webkit-linear-gradient(top left, rgba(255, 255, 255, 0) 0%, 30%, rgba(255, 255, 255, 0.3) 35%, rgba(255, 255, 255, 0.5) 40%, rgba(255, 255, 255, 0) 45%);
+				background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0) 0%, 59%, rgba(255, 255, 255, 0.7) 60%, rgba(255, 255, 255, 0) 80%), linear-gradient(to bottom right, rgba(255, 255, 255, 0) 0%, 30%, rgba(255, 255, 255, 0.3) 35%, rgba(255, 255, 255, 0.5) 40%, rgba(255, 255, 255, 0) 45%);
+			}
+
+			.numbers {
+				position: relative;
+			}
+
+			.number {
+				position: absolute;
+				height: 200px;
+				-webkit-transform-origin: 0 100%;
+				transform-origin: 0 100%;
+				font-size: 28px;
+			}
+
+			.number:nth-child(1) {
+				-webkit-transform: rotate(25deg);
+				transform: rotate(25deg);
+			}
+
+			.number:nth-child(1) span {
+				display: block;
+				-webkit-transform: rotate(-25deg);
+				transform: rotate(-25deg);
+			}
+
+			.number:nth-child(2) {
+				-webkit-transform: rotate(55deg);
+				transform: rotate(55deg);
+			}
+
+			.number:nth-child(2) span {
+				display: block;
+				-webkit-transform: rotate(-55deg);
+				transform: rotate(-55deg);
+			}
+
+			.number:nth-child(3) {
+				-webkit-transform: rotate(85deg);
+				transform: rotate(85deg);
+			}
+
+			.number:nth-child(3) span {
+				display: block;
+				-webkit-transform: rotate(-85deg);
+				transform: rotate(-85deg);
+			}
+
+			.number:nth-child(4) {
+				-webkit-transform: rotate(115deg);
+				transform: rotate(115deg);
+			}
+
+			.number:nth-child(4) span {
+				display: block;
+				-webkit-transform: rotate(-115deg);
+				transform: rotate(-115deg);
+			}
+
+			.number:nth-child(5) {
+				-webkit-transform: rotate(145deg);
+				transform: rotate(145deg);
+			}
+
+			.number:nth-child(5) span {
+				display: block;
+				-webkit-transform: rotate(-145deg);
+				transform: rotate(-145deg);
+			}
+
+			.number:nth-child(6) {
+				-webkit-transform: rotate(175deg);
+				transform: rotate(175deg);
+			}
+
+			.number:nth-child(6) span {
+				display: block;
+				-webkit-transform: rotate(-175deg);
+				transform: rotate(-175deg);
+			}
+
+			.number:nth-child(7) {
+				-webkit-transform: rotate(205deg);
+				transform: rotate(205deg);
+			}
+
+			.number:nth-child(7) span {
+				display: block;
+				-webkit-transform: rotate(-205deg);
+				transform: rotate(-205deg);
+			}
+
+			.number:nth-child(8) {
+				-webkit-transform: rotate(235deg);
+				transform: rotate(235deg);
+			}
+
+			.number:nth-child(8) span {
+				display: block;
+				-webkit-transform: rotate(-235deg);
+				transform: rotate(-235deg);
+			}
+
+			.number:nth-child(9) {
+				-webkit-transform: rotate(265deg);
+				transform: rotate(265deg);
+			}
+
+			.number:nth-child(9) span {
+				display: block;
+				-webkit-transform: rotate(-265deg);
+				transform: rotate(-265deg);
+			}
+
+			.number:nth-child(10) {
+				-webkit-transform: rotate(295deg);
+				transform: rotate(295deg);
+			}
+
+			.number:nth-child(10) span {
+				display: block;
+				-webkit-transform: rotate(-295deg);
+				transform: rotate(-295deg);
+			}
+
+			.number:nth-child(11) {
+				-webkit-transform: rotate(325deg);
+				transform: rotate(325deg);
+			}
+
+			.number:nth-child(11) span {
+				display: block;
+				-webkit-transform: rotate(-325deg);
+				transform: rotate(-325deg);
+			}
+
+			.number:nth-child(12) {
+				-webkit-transform: rotate(355deg);
+				transform: rotate(355deg);
+			}
+
+			.number:nth-child(12) span {
+				display: block;
+				-webkit-transform: rotate(-355deg);
+				transform: rotate(-355deg);
+			}
+
+			.arms {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+			}
+
+			.arms:after {
+				display: block;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 30px;
+				height: 30px;
+				content: "";
+				background: #ccc;
+				border-radius: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				z-index: 999;
+			}
+
+			.arm {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				height: 120px;
+				width: 10px;
+				content: "";
+				background: black;
+				-webkit-transform: translate(-50%, -100%);
+				transform: translate(-50%, -100%);
+				border-radius: 0 0 20px 20px;
+				-webkit-transform-origin: 50% 100%;
+				transform-origin: 50% 100%;
+				z-index: 4;
+				-webkit-animation: count 3600s linear infinite;
+				animation: count 3600s linear infinite;
+				--angle: 0deg;
+			}
+
+			.arm:after {
+				display: block;
+				content: "";
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 80%;
+				height: calc(100% + 110px);
+				background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.8), transparent 70%);
+				background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent 70%);
+				z-index: 1;
+				-webkit-animation: moveShadow 3600s linear infinite;
+				animation: moveShadow 3600s linear infinite;
+				-webkit-transform-origin: 50% 100%;
+				transform-origin: 50% 100%;
+			}
+
+			.arm:before {
+				display: block;
+				position: absolute;
+				top: -50px;
+				width: 0;
+				height: 0;
+				border: 10px solid transparent;
+				border-width: 10px 5px 41px;
+				border-bottom-color: black;
+				content: "";
+			}
+
+			.arm.arm-hour {
+				height: 70px;
+				-webkit-transform: translate(-50%, -100%) rotate(130deg);
+				transform: translate(-50%, -100%) rotate(130deg);
+				-webkit-animation: count 216000s linear infinite;
+				animation: count 216000s linear infinite;
+				/* --angle: 10deg; */
+			}
+
+			.arm.arm-hour:after {
+				-webkit-animation: moveShadow 216000s linear infinite;
+				animation: moveShadow 216000s linear infinite;
+			}
+
+			.arm.arm-minute {
+				/* --angle: 20deg; */
+			}
+
+			.arm.arm-second {
+				display: block;
+				height: 130px;
+				width: 8px;
+				-webkit-transform: translate(-50%, -100%) rotate(60deg);
+				transform: translate(-50%, -100%) rotate(60deg);
+				z-index: 3;
+				background: red;
+				-webkit-animation: count 60s linear infinite;
+				animation: count 60s linear infinite;
+				--angle: 30deg;
+			}
+
+			.arm.arm-second:after {
+				-webkit-animation: moveShadow 60s linear infinite;
+				animation: moveShadow 60s linear infinite;
+			}
+
+			.arm.arm-second .body {
+				display: block;
+				position: relative;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				content: "";
+				background: red;
+				z-index: 4;
+			}
+
+			.arm.arm-second:before {
+				border-width: 10px 4px 41px;
+				border-bottom-color: red;
+				z-index: -1;
+			}
+
+			@-webkit-keyframes count {
+
+				0%,
+				100% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+				}
+
+				25% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+				}
+
+				50% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 180deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 180deg));
+				}
+
+				75% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 270deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 270deg));
+				}
+			}
+
+			@keyframes count {
+
+				0% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 0deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 0deg));
+				}
+
+				25% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 90deg));
+				}
+
+				50% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 180deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 180deg));
+				}
+
+				75% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 270deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 270deg));
+				}
+
+				100% {
+					-webkit-transform: translate(-50%, -100%) rotate(calc(var(--angle) + 360deg));
+					transform: translate(-50%, -100%) rotate(calc(var(--angle) + 360deg));
+				}
+			}
+
+			@-webkit-keyframes moveShadow {
+
+				0%,
+				100%,
+				5% {
+					-webkit-transform: rotate(5deg);
+					transform: rotate(5deg);
+				}
+
+				10% {
+					-webkit-transform: rotate(8deg);
+					transform: rotate(8deg);
+				}
+
+				40%,
+				90% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+
+				70% {
+					-webkit-transform: rotate(-5deg);
+					transform: rotate(-5deg);
+				}
+			}
+
+			@keyframes moveShadow {
+
+				0%,
+				100%,
+				5% {
+					-webkit-transform: rotate(5deg);
+					transform: rotate(5deg);
+				}
+
+				10% {
+					-webkit-transform: rotate(8deg);
+					transform: rotate(8deg);
+				}
+
+				40%,
+				90% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+
+				70% {
+					-webkit-transform: rotate(-5deg);
+					transform: rotate(-5deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="watch">
+			<div class="face">
+				<div class="numbers">
+					<div class="number number-1"> <span>1</span></div>
+					<div class="number number-2"> <span>2</span></div>
+					<div class="number number-3"> <span>3</span></div>
+					<div class="number number-4"> <span>4</span></div>
+					<div class="number number-5"> <span>5</span></div>
+					<div class="number number-6"> <span>6</span></div>
+					<div class="number number-7"> <span>7</span></div>
+					<div class="number number-8"> <span>8</span></div>
+					<div class="number number-9"> <span>9</span></div>
+					<div class="number number-10"> <span>10</span></div>
+					<div class="number number-11"> <span>11</span></div>
+					<div class="number number-12"> <span>12</span></div>
+				</div>
+				<div class="arms">
+					<div class="arm arm-hour"></div>
+					<div class="arm arm-minute"></div>
+					<div class="arm arm-second">
+						<div class="body"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
