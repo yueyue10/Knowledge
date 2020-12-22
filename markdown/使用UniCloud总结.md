@@ -1,6 +1,12 @@
 # UniCloud数据库 
 [unicloud数据库官方文档][uniCloud_database]
 
+> 关于UniCloud数据库的操作文档已经部署到服务器上：
+
+[**uniCloud数据库文档**][unicloud]
+
+[**uniCloud数据库聚合操作文档**][unicloud_aggregate]
+
 ## 详细操作目录
 |   操作	|   说明				|
 |------|------------|
@@ -82,4 +88,6 @@
 [database_update]:UniCloud/更新文档.md
 [database_query]:UniCloud/查询文档.md
 [database_command]:UniCloud/数据库操作符.md
-[database_aggregate]:UniCloud-聚合操作/README.md
+[database_aggregate]:UniCloud-聚合操作/聚合操作0.md
+[unicloud]:https://zhaoyj.work/markdown/unicloud/README.html#1
+[unicloud_aggregate]:https://zhaoyj.work/markdown/unicloud_aggregate/README.html#1
