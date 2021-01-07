@@ -1,6 +1,8 @@
-vue常见的style和class动态绑定问题
+# vue知识
 
-### style 动态绑定
+## 一、vue常见的`style`和`class`动态绑定问题
+
+### 1.style 动态绑定
 
 > 三元判断
 ```
@@ -37,7 +39,7 @@ vue常见的style和class动态绑定问题
 :style="{ top: 'calc(75px + ' + marginTop + 'px)' }"
 ```
 
-### class 动态绑定
+### 2.class 动态绑定
 
 > 条件判断
 ```
@@ -53,3 +55,7 @@ vue常见的style和class动态绑定问题
 ```
 :class="[{ 'tab-below': tabBelow }, { 'tab-below-route_detail': showRouteDetail }]"
 ```
+
+## 二、vue项目配置
+* store(vuex)使用
+* mixin使用

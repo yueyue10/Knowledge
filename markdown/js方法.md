@@ -6,6 +6,53 @@ https://www.cnblogs.com/wfc139/p/10383509.html
 >阮一峰es6教程
 https://es6.ruanyifeng.com/
 
+## 一、export方法
+### 1.导出单个方法
+```
+//common.js 导出
+export function getRandomId() {}
+//index.js 引用
+import { getRandomId } from '@/utils/common.js'
+import * as common from '@/utils/common.js'
+```
+### 2.导出对象
+方式一：
+```
+//router.js 导出
+const router = {
+  colorui: '/devTools/colorui/colorui',
+  imgfilter: '/devTools/imgfilter/imgfilter'
+}
+module.exports = router
+
+//index.js 引用
+import {
+  colorui
+} from '../../router'
+```
+方式二：
+```
+//picture.js 导出
+async function getAccessToken(str64) {}
+module.exports = {
+  getAccessToken
+}
+
+//index.js 引用
+const pictureModel = require('./picture.js');
+pictureModel.getAccessToken(event.str64)
+```
+方式三：
+```
+//request.js 导出
+const service = axios.create({})
+export default service
+//index.js 引用
+import request from '@/utils/request'
+```
+
+
+## 二、数组、字符串常用方法
 ### 1. map()方法
 > map() 方法`创建一个新数组`，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果。
 
@@ -100,3 +147,13 @@ let userFil = users.filter(item => {
 })
 console.log(userFil)
 ```
+
+## 三、项目中的js方法记录
+* 方法简写
+```
+//参数：根目录下的dir文件夹名称
+//返回：dir对应的全路径值
+const resolve = dir => path.join(__dirname, dir)
+resolve('src')  //返回src目录的全路径
+```
+
