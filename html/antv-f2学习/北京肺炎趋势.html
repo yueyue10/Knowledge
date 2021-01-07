@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>折线图</title>
+		<script type="text/javascript" src="js/data_line.js"></script>
+		<script src="https://gw.alipayobjects.com/os/antv/assets/f2/3.4.2/f2.min.js"></script>
+		<!--        <script src="js/f2.js"></script>-->
+	</head>
+	<body>
+		<!-- https://cdn.com/bootstarp.css -->
+		<div>北京肺炎趋势</div>
+		<canvas id="myChart" width="400" height="260"></canvas>
+		<script>
+			window.onload = function() {
+				var url = "res/bj_people.json" /*json文件url，本地的就写本地的位置，如果是服务器的就写服务器的路径*/
+				var request = new XMLHttpRequest();
+				request.open("get", url); /*设置请求方法与路径*/
+				request.send(null); /*不发送数据到服务器*/
+				request.onload = function() { /*XHR对象获取到返回信息后执行*/
+					if (request.status == 200) { /*返回状态为200，即为数据获取成功*/
+						var json = JSON.parse(request.responseText);
+						initChart(json)
+					}
+				}
+			}
+
+			function initChart(line_data) {
+				console.log(JSON.stringify(line_data[0]))
+				const chart = new F2.Chart({
+					id: 'myChart',
+					pixelRatio: window.devicePixelRatio
+				});
+				var margin = 1 / line_data.length;
+				chart.source(line_data, {
+					date: {
+						type: 'timeCat',
+						mask: 'MM-DD',
+						range: [margin / 2, 1 - margin / 2],
+						tickCount: line_data.length
+					},
+					personNum: {
+						min: 0
+					}
+				});
+				chart.tooltip({
+					showCrosshairs: true,
+					showItemMarker: false,
+					onShow: function onShow(ev) {
+						const items = ev.items;
+						items[0].date = null;
+						items[0].personNum = items[0].personNum;
+					}
+				});
+				chart.line().position('date*personNum').color('type',
+						function(type) {
+							if (type === '预测') {
+								return '#FDCD95';
+							} else {
+								return '#01BCB2';
+							}
+						})
+					.shape('type', function(type) {
+						if (type === '预测') {
+							return 'dash';
+						} else {
+							return 'line';
+						}
+					});
+				chart.render();
+			}
+		</script>
+	</body>
+</html>

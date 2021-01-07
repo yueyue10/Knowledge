@@ -1,0 +1,18 @@
+#设置以下参数，不允许匿名登录FTP服务器，允许本地用户登录FTP服务器，并指定FTP本地用户使用的文件目录。
+anonymous_enable=NO              #不允许匿名登录FTP服务器
+local_enable=YES                 #允许本地用户登录FTP服务器
+local_root=/home/ftptest       #FTP本地用户使用的文件目录
+
+#设置以下参数，限制用户只能访问自身的主目录。
+chroot_local_user=YES                      #所有用户都被限制在其主目录
+chroot_list_enable=YES                     #启用例外用户名单
+chroot_list_file=/etc/vsftpd/chroot_list   #例外用户名单
+allow_writeable_chroot=YES
+
+#设置以下参数，配置FTP支持被动模式。并指定FTP服务器的公网IP地址，以及可供访问的端口范围，端口范围请根据实际环境进行设置。
+listen=YES
+listen_ipv6=NO
+pasv_address=81.68.145.189      #FTP服务器的公网IP地址
+
+pasv_min_port=3000            #被动模式下的最小端口
+pasv_max_port=3100            #被动模式下的最大端口

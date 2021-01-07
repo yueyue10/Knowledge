@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>环形图</title>
+        <script src="js/f2.js"></script>
+    </head>
+    <body>
+        <canvas id="myChart" width="400" height="260"></canvas>
+        <script>
+            const data = [{
+                name: '待乘车',
+                percent: 34,
+                people: 1749,
+                a: '1'
+            }, {
+                name: '已乘车',
+                percent: 60,
+                people: 3123,
+                a: '1'
+            }, {
+                name: '待入园',
+                percent: 6,
+                people: 312,
+                a: '1'
+            }];
+            /**
+             * 创建Map数据供图例中使用
+             */
+            const map = {};
+            data.forEach(function (obj) {
+                map[obj.name] = obj.percent + '%';
+            });
+            const mapPeople = {};
+            data.forEach(function (obj) {
+                mapPeople[obj.name] = obj.people;
+            });
+
+            const chart = new F2.Chart({
+                id: 'myChart',
+                pixelRatio: window.devicePixelRatio,
+                padding: [20, 'auto']
+            });
+            chart.source(data, {
+                percent: {
+                    formatter: function formatter(val) {
+                        return val + '%';
+                    }
+                }
+            });
+            chart.tooltip(false);
+            /**
+             * 设置图例
+             */
+            chart.legend({
+                position: 'right',
+                itemFormatter: function itemFormatter(val) {
+                    return val + '    ' + mapPeople[val] + '    ' + map[val];
+                }
+            });
+            /**
+             * 设置坐标系
+             */
+            chart.coord('polar',// 设置极坐标系
+                {
+                    transposed: true, // 坐标系翻转
+                    innerRadius: 0.7, // 内环半径，数值为 0 - 1 范围
+                    radius: 0.85 // 半径，数值为 0 - 1 范围
+                });
+            chart.axis(false);
+            /**
+             * 设置图表类型
+             */
+            chart.interval() // 使用矩形或者弧形，用面积来表示大小关系的图形，一般构成柱状图、饼图等图表。
+                .position('a*percent')
+                .color('name', ['#FE5D4D', '#3BA4FF', '#737DDE'])
+                .adjust('stack');
+            /**
+             * 绘制图表的辅助元素
+             */
+            chart.guide().html({
+                position: ['50%', '50%'],
+                html:
+                    `<div style="display:flex;flex-direction: row">
+                       <div style="display:flex;font-size: 24px;font-weight:bold;">
+                       3820
+                       <div style="font-size: 13px;font-weight: lighter">人</div>
+                       </div>
+                     </div>`
+            });
+            // chart.guide().text({
+            //     position: ['50%', '50%'],
+            //     content: '3820', // 显示的文本内容
+            //     style: {
+            //         fill: '#666', // 文本颜色
+            //         fontSize: '20', // 文本大小
+            //         fontWeight: 'bold', // 文本粗细
+            //         // rotate: Math.PI / 4 // 文本旋转，以弧度为单位
+            //     }
+            // })
+            chart.render();
+        </script>
+    </body>
+</html>

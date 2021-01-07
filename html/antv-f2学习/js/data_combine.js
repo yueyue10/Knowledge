@@ -1,0 +1,42 @@
+const com_data = [{
+    date: '2019/11/10',
+    carNum: 4,
+    personNum: 380
+}, {
+    date: '2019/11/11',
+    carNum: 5,
+    personNum: 450
+}, {
+    date: '2019/11/12',
+    carNum: 6,
+    personNum: 580
+}, {
+    date: '2019/11/13',
+    carNum: 7,
+    personNum: 640
+}, {
+    date: '2019/11/14',
+    carNum: 6,
+    personNum: 570
+}, {
+    date: '2019/11/15',
+    carNum: 4,
+    personNum: 350
+}, {
+    date: '2019/11/16',
+    carNum: 5,
+    personNum: 420
+}, {
+    date: '2019/11/17',
+    carNum: 6,
+    personNum: 540
+}, {
+    date: '2019/11/18',
+    carNum: 5,
+    personNum: 450
+}, {
+    date: '2019/11/19',
+    carNum: 4,
+    personNum: 340
+}]
+

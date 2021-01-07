@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>折线图</title>
+		<script type="text/javascript" src="js/data_line.js"></script>
+		<script src="https://gw.alipayobjects.com/os/antv/assets/f2/3.4.2/f2.min.js"></script>
+		<script src="js/f2.js"></script>
+	</head>
+	<body>
+		<!-- https://cdn.com/bootstarp.css -->
+		<canvas id="myChart" width="400" height="260"></canvas>
+		<div style="font-size: 18px">待完善的地方：
+			<div style="font-size: 15px;margin-top: 5px;">1. 折线左右移动功能</div>
+			<div style="font-size: 15px;margin-top: 3px;">2. 折线点击监听-Tooltip</div>
+			<div style="font-size: 15px;margin-top: 3px;">3. 图例功能完善</div>
+			<div style="font-size: 15px;margin-top: 3px;">4. y轴单位添加</div>
+		</div>
+		<script>
+			console.log(JSON.stringify(line_data[0]))
+			const chart = new F2.Chart({
+				id: 'myChart',
+				pixelRatio: window.devicePixelRatio
+			});
+			var margin = 1 / line_data.length;
+			chart.source(line_data, {
+				date: {
+					type: 'timeCat',
+					mask: 'MM-DD',
+					range: [margin / 2, 1 - margin / 2],
+					tickCount: line_data.length
+				},
+				personNum: {
+					min: 0
+				}
+			});
+			chart.tooltip(true);
+			chart.line().position('date*personNum').color('type',
+					function(type) {
+						if (type === '预测') {
+							return '#FDCD95';
+						} else {
+							return '#01BCB2';
+						}
+					})
+				.shape('type', function(type) {
+					if (type === '预测') {
+						return 'dash';
+					} else {
+						return 'line';
+					}
+				});
+			chart.point()
+				.position('date*personNum')
+				.style('type', {
+					lineWidth: 1,
+					fill: function fill(val) {
+						if (val === '预测') {
+							return '#fff';
+						} else {
+							return '#01BCB2';
+						}
+					},
+					stroke: function fill(val) {
+						if (val === '预测') {
+							return '#FDCD95';
+						} else {
+							return '#01BCB2';
+						}
+					}
+				});
+			chart.render();
+		</script>
+	</body>
+</html>

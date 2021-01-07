@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>组合图</title>
+		<script src="js/f2.js"></script>
+		<script type="text/javascript" src="js/data_combine.js"></script>
+	</head>
+	<body>
+		<canvas id="myChart" width="400" height="200"></canvas>
+		<div style="font-size: 18px">待完善的地方：
+			<div style="font-size: 15px;margin-top: 5px;">1. 左右平移问</div>
+		</div>
+		<script>
+			console.log(JSON.stringify(com_data[0]))
+			const chart = new F2.Chart({
+				id: 'myChart',
+				pixelRatio: window.devicePixelRatio
+			});
+			var margin = 1 / com_data.length;
+			chart.source(com_data, {
+				date: {
+					type: 'timeCat',
+					mask: 'MM-DD',
+					range: [margin / 2, 1 - margin / 2],
+					tickCount: com_data.length
+				},
+				personNum: {
+					min: 0
+				}
+			});
+			chart.interval().position('date*carNum').color('#DBF6F4');
+			chart.line().position('date*personNum').color('#FDCD95').shape('line');
+			chart.point().position('date*personNum').style('type', {
+				lineWidth: 3,
+				fill: '#FDB969',
+				stroke: '#FDB969'
+			});
+			chart.axis('personNum', {
+				position: 'left'
+			})
+			chart.axis('carNum', {
+				position: 'right'
+			})
+			chart.render();
+		</script>
+	</body>
+</html>

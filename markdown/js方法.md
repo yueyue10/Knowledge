@@ -1,3 +1,11 @@
+# 网上资源参考：
+https://www.cnblogs.com/zyfeng/p/10541133.html
+
+https://www.cnblogs.com/wfc139/p/10383509.html
+
+>阮一峰es6教程
+https://es6.ruanyifeng.com/
+
 ### 1. map()方法
 > map() 方法`创建一个新数组`，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果。
 

@@ -1,0 +1,36 @@
+server{
+    location ^~/weixin/ {
+        proxy_pass http://mp.weixin.qq.com/;
+        add_header Access-Control-Allow-Origin *;
+    }
+    location / {
+        proxy_set_header Accept-Encoding "";
+        proxy_set_header Referer "https://www.fifaofficial.cn/";
+
+        proxy_pass http://www.fifaofficial.cn/;
+        add_header Access-Control-Allow-Origin *;
+    }
+}
+
+
+Path=$PATH:/usr/local/nginx/sbin    profile文件配置nginx
+export Path
+
+/usr/local/nginx/conf/
+/usr/local/nginx/conf/nginx.conf    nginx配置
+/usr/local/nginx/sbin               nginx程序
+    ./nginx -t                      nginx命令
+    ./nginx -s reload
+source /etc/profile                 更新配置文件
+source ~/.bashrc                    更新【root/.bashrc】中配置的环境变量
+chown -R ftpzyj:ftpzyj /home/ftptest 将创建的文件目录所有者改为用于登录FTP的本地用户
+chmod a-w /home/ftptest
+usermod -d /home/ftptest ftpzyj     设置为用户主目录
+
+nginx安装：https://blog.csdn.net/shaock2018/article/details/91382532
+nginx配置：https://blog.csdn.net/weixin_30905981/article/details/95347865?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase
+代理的地址：http://81.68.145.189/weixin/s/1_7ajNMnUqHsrW3rRH0JkQ
+ftp配置：   https://support.huaweicloud.com/bestpractice-ecs/zh-cn_topic_0115828034.html
+
+
+
