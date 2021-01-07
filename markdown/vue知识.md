@@ -59,3 +59,35 @@
 ## 二、vue项目配置
 * store(vuex)使用
 * mixin使用
+* 1.Vue.prototype全局变量挂载[main.js][main.js]
+
+    1.main.js代码：`Vue.use(plugin)`
+    
+    2.plugin.js代码：
+    ```
+    import {
+        initUtil
+    } from './util.js'
+    export default {
+        install(Vue) {
+            initUtil(Vue)
+            initPermission(Vue)
+            initInterceptor()
+        }
+    }
+    ```
+  
+    3.util.js代码：
+    ```
+    function formatDate(date, format = 'yyyy/MM/dd hh:mm:ss'){
+        return ...
+    }
+    export function initUtil(Vue) {
+        Vue.prototype.$formatDate = formatDate
+        Vue.prototype.$formatBytes = formatBytes
+    }
+    ```
+
+
+[main.js]:code/admin_unicloud/main.js
+

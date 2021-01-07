@@ -7,49 +7,105 @@ https://www.cnblogs.com/wfc139/p/10383509.html
 https://es6.ruanyifeng.com/
 
 ## 一、export方法
-### 1.导出单个方法
-```
-//common.js 导出
-export function getRandomId() {}
-//index.js 引用
-import { getRandomId } from '@/utils/common.js'
-import * as common from '@/utils/common.js'
-```
+### 1.导出单个方法 
+* 方式一：`export function`
+    ```
+    //common.js 导出
+    export function getRandomId() {}
+    //index.js 引用
+    import { getRandomId } from '@/utils/common.js'
+    import * as common from '@/utils/common.js'
+    ```
+* 方式二：`exports.xxx`
+    ```
+    // number.js 导出
+    'use strict';
+    Object.defineProperty(exports, '__esModule', { value: true });
+    function strip(num, precision) {
+        return 。。。;
+    }
+    exports.strip = strip;
+    // seat.vue 引入
+    import NumberPlus from "@/utils/number";
+    NumberPlus.strip(x,x)
+    ```
+  
 ### 2.导出对象
-方式一：
-```
-//router.js 导出
-const router = {
-  colorui: '/devTools/colorui/colorui',
-  imgfilter: '/devTools/imgfilter/imgfilter'
-}
-module.exports = router
+* 方式一：`module.exports`
+    ```
+    //router.js 导出
+    const router = {
+      colorui: '/devTools/colorui/colorui',
+      imgfilter: '/devTools/imgfilter/imgfilter'
+    }
+    module.exports = router
+    
+    //index.js 引用
+    import {
+      colorui
+    } from '../../router'
+    ```
+* 方式二：`module.exports`
+    ```
+    //picture.js 导出
+    async function getAccessToken(str64) {}
+    module.exports = {
+      getAccessToken
+    }
+    
+    //index.js 引用
+    const pictureModel = require('./picture.js');
+    pictureModel.getAccessToken(event.str64)
+    ```
+* 方式三：`export default`
+    ```
+    //request.js 导出
+    const service = axios.create({})
+    export default service
+    //index.js 引用
+    import request from '@/utils/request'
+    ```
+* 方式四：`export default`
+    ```
+    //utils.js 导出
+    const objToUrl = obj => {
+      return ...;
+    }
+    const validatePhone = (rule, value, callback) => {
+      ...
+      callback();
+    };
+    export default {
+      objToUrl,
+      validatePhone
+    }
+    //common.js 引入
+    import utils from "../utils/utils"
+    utils.objToUrl(params)
+    ```
+* 方式五：`export default`
+    ```
+    //nfc.js 导出
+    export default {
+        listenNFCStatus: function () { ... },
+        writeData: function () { ... },
+        write(intent) { toast('请将NFC标签靠近！'); ... }
+    }
+    function toast(content){
+        uni.showToast({
+            title: content,
+            icon: 'none'
+        })
+    }
+    //index.vue 导入
+    import nfc from '../../utils/hexiii-nfc.js'
+    nfc.listenNFCStatus();
+    nfc.writeData();
+    ```
 
-//index.js 引用
-import {
-  colorui
-} from '../../router'
-```
-方式二：
-```
-//picture.js 导出
-async function getAccessToken(str64) {}
-module.exports = {
-  getAccessToken
-}
 
-//index.js 引用
-const pictureModel = require('./picture.js');
-pictureModel.getAccessToken(event.str64)
-```
-方式三：
-```
-//request.js 导出
-const service = axios.create({})
-export default service
-//index.js 引用
-import request from '@/utils/request'
-```
+
+
 
 
 ## 二、数组、字符串常用方法
@@ -136,6 +192,10 @@ yearMonth.substring(4);  得到："12"
 
 
 ### 6.其他
+> [`reduce方法`][reduce]
+
+[reduce]:https://www.jianshu.com/p/e375ba1cfc47
+
 #### 集合筛选
 
 > 两个集合数据筛选
