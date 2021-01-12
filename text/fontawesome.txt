@@ -1,0 +1,6 @@
+https://www.cnblogs.com/-Lily-/p/7479194.html
+
+https://www.bootcss.com/p/font-awesome/design.html
+
+小程序设备功能
+https://developers.weixin.qq.com/miniprogram/dev/api/device/bluetooth-peripheral/wx.onBLEPeripheralConnectionStateChanged.html

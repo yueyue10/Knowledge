@@ -209,6 +209,7 @@ console.log(userFil)
 ```
 
 ## 三、项目中的js方法记录
+
 * 方法简写
 ```
 //参数：根目录下的dir文件夹名称
@@ -217,3 +218,20 @@ const resolve = dir => path.join(__dirname, dir)
 resolve('src')  //返回src目录的全路径
 ```
 
+* 标签、状态集合数据使用对象存储(类似java里面的Map或者枚举)<其实就是一种对应关系的数据集合>，这样写的目的是很清晰
+```
+// 这里的对象的属性值同上面，是使用了方法的值。
+const filter = {
+    all: todos => todos,
+    active: todos => todos.filter(item => !item.done),
+    complete: todos => todos.filter(item => item.done)
+}
+// 使用：filter['active'](this.todoList) 得到的就是筛选出来的数据
+statusMap: {
+  12: "正在拼团",
+  40: "待评价",
+  60: "退款中",
+  70: "已退款"
+}
+// 使用：statusMap[status] status是接口返回的值，就可以得到对应的状态名称
+```
