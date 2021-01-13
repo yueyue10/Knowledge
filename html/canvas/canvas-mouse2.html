@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas鼠标响应</title>
+</head>
+<body>
+<div style="width: fit-content;border: #cccccc solid 1px">
+    <canvas id="demo" width="200px" height="200px"></canvas>
+</div>
+<div style="margin-top: 50px">鼠标拖动上方图形到外面进行删除</div>
+<script type="text/javascript">
+    const canvas = document.getElementById('demo')
+
+    class rectangular {
+        constructor(
+            ctx,
+            {
+                top = 0,
+                left = 0,
+                width = 30,
+                height = 50,
+                background = 'red'
+            }
+        ) {
+            this.ctx = ctx
+            this.top = top
+            this.left = left
+            this.width = width
+            this.height = height
+            this.background = background
+        }
+
+        painting() {
+            this.ctx.beginPath()
+            this.ctx.moveTo(this.left, this.top)
+            this.ctx.lineTo(this.left + this.width, this.top)
+            this.ctx.lineTo(this.left + this.width, this.top + this.height)
+            this.ctx.lineTo(this.left, this.top + this.height)
+            this.ctx.fillStyle = this.background
+            this.ctx.fill()
+            this.ctx.closePath()
+        }
+
+        adjust(left, top) {
+            this.left += left
+            this.top += top
+        }
+    }
+
+    class circle {
+        constructor(
+            ctx,
+            {
+                center = [],
+                radius = 10,
+                background = 'blue'
+            }
+        ) {
+            this.ctx = ctx
+            this.center = [center[0] === undefined ? radius : center[0], center[1] === undefined ? radius : center[1]]
+            this.radius = radius
+            this.background = background
+        }
+
+        painting() {
+
+            this.ctx.beginPath()
+            this.ctx.arc(this.center[0], this.center[1], this.radius, 0, Math.PI * 2, false)
+            this.ctx.fillStyle = this.background
+            this.ctx.fill()
+            this.ctx.closePath()
+        }
+
+        adjust(left, top) {
+            this.center[0] += left
+            this.center[1] += top
+        }
+    }
+
+    class demo {
+        constructor(canvas) {
+            this.canvasInfo = canvas.getBoundingClientRect()
+            this.renderList = []
+            this.ctx = canvas.getContext('2d')
+            this.canvas = canvas
+            this.rectangular = (config) => {
+                let target = new rectangular(this.ctx, {...config})
+                this.addRenderList(target)
+                return this
+            }
+
+            this.circle = (config) => {
+                let target = new circle(this.ctx, {...config})
+                this.addRenderList(target)
+                return this
+            }
+            this.addEvent()
+        }
+
+        addRenderList(target) {
+            this.renderList.push(target)
+        }
+
+        itemToLast(index) {
+            const lastItem = this.renderList.splice(index, 1)[0]
+
+            this.renderList.push(lastItem)
+        }
+
+        painting() {
+            this.ctx.clearRect(0, 0, this.canvasInfo.width, this.canvasInfo.height)
+            this.renderList.forEach(it => it.painting())
+        }
+
+        addEvent() {
+            const that = this
+            let startX, startY
+
+            canvas.addEventListener('mousedown', e => {
+                startX = e.clientX
+                startY = e.clientY
+                let choosedIndex = null
+                this.renderList.forEach((it, index) => {
+                    it.painting()
+                    if (this.ctx.isPointInPath(startX, startY)) {
+                        choosedIndex = index
+                    }
+                })
+
+                if (choosedIndex !== null) {
+                    this.itemToLast(choosedIndex)
+                }
+
+                document.addEventListener('mousemove', mousemoveEvent)
+                document.addEventListener('mouseup', mouseupEvent)
+                this.painting()
+            })
+
+            function mousemoveEvent(e) {
+                const target = that.renderList[that.renderList.length - 1]
+                const currentX = e.clientX
+                const currentY = e.clientY
+                target.adjust(currentX - startX, currentY - startY)
+                startX = currentX
+                startY = currentY
+                that.painting()
+            }
+
+            function mouseupEvent(e) {
+                const target = that.renderList[that.renderList.length - 1]
+                const currentX = e.clientX
+                const currentY = e.clientY
+
+                target.adjust(currentX - startX, currentY - startY)
+                startX = currentX
+                startY = currentY
+                that.painting()
+                document.removeEventListener('mousemove', mousemoveEvent)
+                document.removeEventListener('mouseup', mouseupEvent)
+            }
+        }
+    }
+
+    const yes = new demo(canvas)
+        .rectangular({})
+        .rectangular({top: 60, left: 60, background: 'blue'})
+        .rectangular({top: 30, left: 20, background: 'green'})
+        .circle()
+        .circle({center: [100, 30], background: 'red', radius: 5})
+        .painting()
+</script>
+</body>
+</html>

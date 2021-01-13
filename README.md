@@ -13,8 +13,28 @@
 >> * 使用`pandoc xx.md -o xx.docx`即可将md文件转换为doc文件
 
 > 3.markdown文件添加表情
->> * win10系统下，使用`win + .`快捷键就可以打开系统自带的表情符号
+>> * win10系统下，使用**`win`+`.`**快捷键就可以打开系统自带的表情符号
 >> * 然后就可以在markdown文件中愉快的输入表情咯😋🤩👏
+
+> 4.markdown文件转微信公众号文章 [**Markdown Nice**][Markdown_Nice]
+>> * 在网站注册并编辑`Markdown`文件
+>> * 编辑完右边有`复制到公众号`选项
+>> * 在公众号编辑文章界面直接粘贴代码即可看到效果
+>> * 这是我发布到公众号的效果[Javascript方法总结][markdown_weichat]
+
+> 5.markdown在`掘金的主题效果`[**设置主题效果的文章**][markdown_juejin]
+>> * 进入文章编辑界面
+>> * 在上面有默认的主题设置，`theme: juejin`
+>> * 我们可以从主题列表里面选择，修改为其他好看的主题就可以。上面的文章中的主题是`channing-cyan`
+
+    ```
+    ---
+    # 主题列表：juejin, github, smartblue, cyanosis, channing-cyan, fancy, hydrogen, condensed-night-purple, greenwillow, v-green, vue-pro, healer-readable, mk-cute, jzman, geek-black, awesome-green, qklhk-chocolate
+    # 贡献主题：https://github.com/xitu/juejin-markdown-themes
+    theme: juejin
+    highlight:
+    ---
+    ```
 
 ## 一、项目背景：
 
@@ -40,8 +60,11 @@
 [html]:html
 [bigdata]:bigdata
 [markdown]:markdown
+[Markdown_Nice]:https://www.mdnice.com/
 [md生成带侧边栏的目录]:markdown/md生成带侧边栏的目录.md
 [juejin]:https://juejin.cn/user/782508011296295
+[markdown_juejin]:https://juejin.cn/post/6901833426182078471
 [pandoc-baidu]:https://pan.baidu.com/s/1XZEXSCbHqolSwLmFr9SxYA
 [unicloud]:https://zhaoyj.work/markdown/unicloud/README.html#1
+[markdown_weichat]:https://mp.weixin.qq.com/s/h61B97ATYZ00Sdt8XbTE_g
 [unicloud_aggregate]:https://zhaoyj.work/markdown/unicloud_aggregate/README.html#1

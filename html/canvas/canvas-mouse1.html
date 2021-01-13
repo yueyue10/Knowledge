@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas-鼠标响应</title>
+    <style type="text/css">
+        .hor-layout-center {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #c3c3c3; background:green">
+    Your browser does not support the canvas element.
+</canvas>
+<div class="hor-layout-center">
+    <div>颜色：</div>
+    <div id="color" style="width:10px;height:10px;background:black"></div>
+</div>
+<div class="hor-layout-center">
+    <div>颜色值：</div>
+    <text id="text" style="color:black"/>
+</div>
+<script type="text/javascript">
+    var myCanvas = document.getElementById("myCanvas");
+    var cxt = myCanvas.getContext("2d");
+    cxt.fillStyle = "#FF0000";
+    cxt.beginPath();
+    cxt.arc(70, 18, 15, 0, Math.PI * 2, true);
+    cxt.closePath();
+    cxt.fill();
+
+    var color = document.getElementById('color');
+    var text = document.getElementById('text');
+
+    function pick(event) {
+        var x = event.layerX;
+        var y = event.layerY;
+        var pixel = cxt.getImageData(x, y, 1, 1);
+        //alert(JSON.stringify(pixel))
+        var data = pixel.data;
+        var rgba = 'rgba(' + data[0] + ', ' + data[1] + ', ' + data[2] + ', ' + (data[3] / 255) + ')';
+
+        color.style.background = rgba;
+        //color.textContent = rgba;
+        text.textContent = JSON.stringify(pixel);
+    }
+
+    myCanvas.addEventListener('mousemove', pick);
+</script>
+
+</body>
+</html>
