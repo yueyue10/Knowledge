@@ -1,0 +1,703 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312"/>
+    <!--[if lt IE 9]>
+    <script language="javascript" type="text/javascript" src="/jqplot/excanvas.min.js"></script><![endif]-->
+    <script type="text/javascript">
+        var list = [];
+        var currentC;
+        var selected = [];
+        var _e = {};
+        var showTimer;
+        var keyBoardTimer;
+        var move = false;
+        var hit = false;
+        var inZoom = false;
+        var exist = false;
+        var ctrlDown = false;
+        var directDown = '';
+        var cricle = function (x, y, r) {
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.angle = 10;
+            this.posB = {};
+
+            this.isCurrent = false;
+            /*如果传递了flag参数，表示正在执行鼠标拖选操作，必须忽略是否有图层被选中的判断*/
+            this.drawC = function (ctx, x, y, posA) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - this.r);
+                ctx.arc(this.x, this.y, this.r, 2 * Math.PI, 0, true);
+                /*判断元素是否在选区中*/
+                for (var i = selected.length; i--;) {
+                    if (this === selected[i]) {
+                        exist = true;
+                        console.log('exits');
+                    }
+                }
+                console.log('exitfor');
+                /*1.非鼠标拖选，此时posA为空，
+                *2.页面加载时x,y没有传值.(鼠标抬起)
+                */
+                if (!posA && x && y && this.isCurrent) {
+                    ctx.fillStyle = '#ff0000';
+                    currentC = this;
+                    this.isCurrent = true;
+                    if (selected.length > 0) {
+                        console.log(selected.length);
+
+                        if (!exist) {
+                            console.log('notexits');
+                            selected.push(this);
+                        }
+                        exist = false;/*判断过后，重置元素是否在选区中的状态*/
+                    } else {
+                        selected.push(this);
+                    }
+                } else {
+
+                    if (posA) {/*拖选过程中，碰撞检测*/
+                        //console.log('1');
+                        /*如果是圆posB:{正对角线两点坐标，中心点坐标，旋转角度}*/
+                        this.posB = {
+                            'x1': (this.x - this.r),
+                            'y1': (this.y - this.r),
+                            'x2': (this.x + this.r),
+                            'y2': (this.y + this.r),
+                            'x3': (this.x + this.r),
+                            'y3': (this.y - this.r),
+                            'x4': (this.x - this.r),
+                            'y4': (this.y + this.r),
+                            'x': this.x,
+                            'y': this.y,
+                            'angle': this.angle
+                        };
+                        /*如果是矩形posB:{正对角线两点坐标，副对角线两点坐标，中心点坐标，旋转角度}*/
+                        //this.posB={x1,y1,x2,y2,x3,y3,x4,y4,x,y,angle}
+                        var flag = testCollision(posA, this.posB);
+                        if (flag) {
+                            //console.log('2');
+
+                            if (selected.length > 0) {
+
+                                if (!exist) {
+                                    console.log('notexits');
+                                    selected.push(this);
+                                }
+                                exist = false;/*判断过后，重置元素是否在选区中的状态*/
+                            } else {
+                                selected.push(this);
+                            }
+
+                            console.log('selected', selected.length);
+                            ctx.fillStyle = '#ff0000';
+                        } else {
+                            //console.log('3');
+                            ctx.fillStyle = '#999999';
+                        }
+                    } else {/*既没拖选，也没选中。(页面初始加载，鼠标抬起)*/
+                        if (exist) {
+                            ctx.fillStyle = '#ff0000';
+                        } else {
+                            ctx.fillStyle = '#999999';
+                        }
+                        exist = false;/*判断过后，重置元素是否在选区中的状态*/
+                    }
+
+                }
+                ctx.fill();
+                ctx.restore();
+            }
+            /*判断是否点中元素，点中了就改变当前元素*/
+            this.testHit = function (ctx, x, y) {
+                /*先清空上一次的当前元素*/
+                if (currentC) {
+                    currentC.isCurrent = false;
+                    currentC = null;
+                }
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - this.r);
+                ctx.arc(this.x, this.y, this.r, 2 * Math.PI, 0, true);
+                if (ctx.isPointInPath(x, y)) {
+                    hit = true;
+                    currentC = this;
+                    this.isCurrent = true;
+
+                }
+                ctx.restore();
+            }
+
+        }
+
+        function draw(action) {
+            console.log('draw func');
+            var canvas = document.getElementById('tutorial');
+            canvas.height = canvas.height;//这是个什么技巧，可以清空画布
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+                console.log(['directDown', directDown]);
+                if (action === undefined) {/*如果是页面第一次加载*/
+                    for (var i = 0; i < 10; i++) {
+                        var c = new cricle(20 * i, 20 * i, 5 * i);
+                        c.drawC(ctx);//在一张画布上反复画
+                        list.push(c);
+                    }
+                } else {/*如果是键盘控制移动*/
+                    console.log('delete');
+                    for (var i = 0; i < list.length; i++) {
+                        var c = list[i];
+                        c.drawC(ctx);
+                    }
+                }
+            }
+        }
+
+        function reDraw(e, posA) {//有flag参数表示拖放选择操作
+            console.log('reDraw func');
+            if (e) {
+                e = e || event;
+                var canvas = document.getElementById('tutorial');
+                var x = e.clientX - canvas.offsetLeft;
+                var y = e.clientY - canvas.offsetTop;
+            }
+            /*在每次拖选移动前重置selected，以保证拿到实时的选中元素*/
+            if (posA) {
+                selected = [];
+            }
+            canvas.height = canvas.height;//这是个什么技巧，可以清空画布
+            //var ctx = canvas.getContext('2d');
+            //ctx.clearRect(0,0,canvas.width,canvas.height);
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+                for (var i = 0; i < list.length; i++) {
+                    var c = list[i];
+                    if (posA) {
+                        c.drawC(ctx, x, y, posA);//拖选时
+                    } else {
+                        console.log('ininin');
+                        c.drawC(ctx, x, y);//非拖选时:拖动选区、元素、重画以显示当前元素
+                    }
+                }
+            }
+        }
+
+        function show(e) {
+            console.log('show func');
+
+            move = true;
+            e = e || event;
+            var canvas = document.getElementById('tutorial');
+            var ctx = canvas.getContext('2d');
+            var x = e.clientX - canvas.offsetLeft;
+            var y = e.clientY - canvas.offsetTop;
+            var _x = _e.clientX - canvas.offsetLeft;
+            var _y = _e.clientY - canvas.offsetTop;
+            //showTimer=setInterval(function(e){reDraw(e);console.log('showTimer');},10,_e);//在鼠标移动时不断重画
+            /*如果有选中的图层，则只改变图层中心点的坐标，由定时器showTimer控制重画所有图层
+            *如果没有选中的图层，则清除showTimer定时器，执行鼠标画出跟随矩形效果
+            */
+
+            if (!hit) {
+                console.log('not hit');
+                console.log('dragrect');
+                //clearInterval(showTimer);
+                dragRect(e, _e, __e);
+            } else {
+                if (selected.length > 1) {/*如果有选区*/
+                    if (inZoom) {
+                        /*拖动当前选区*/
+                        console.log('length>1 inzoom');
+                        for (var i = selected.length; i--;) {
+                            var c = selected[i];
+                            c.x = c.x + (x - _x);
+                            c.y = c.y + (y - _y);
+                        }
+                        reDraw(e);
+                    } else {
+                        /*清空选区，拖动当前元素*/
+                        console.log('length>1 notinzoom');
+                        selected = [];
+                        if (currentC) {
+                            currentC.x = currentC.x + (x - _x);
+                            currentC.y = currentC.y + (y - _y);
+                            reDraw(e)
+                        }
+                    }
+                } else {/*如果没有选区*/
+                    /*拖动当前元素*/
+                    console.log('length<=1 inzoom');
+                    if (currentC) {
+                        currentC.x = currentC.x + (x - _x);
+                        currentC.y = currentC.y + (y - _y);
+                        reDraw(e)
+                    }
+                }
+            }
+            _e = e;
+        }
+
+        function dragRect(e, _e, __e) {
+            console.log('dragRect func');
+            var pos = {};
+            var canvas = document.getElementById('tutorial');
+            canvas.style.zIndex = '100';
+            //鼠标当前位置
+            var x = e.clientX - canvas.offsetLeft;
+            var y = e.clientY - canvas.offsetTop;
+            //鼠标移动的前一步位置
+            var _x = _e.clientX - canvas.offsetLeft;
+            var _y = _e.clientY - canvas.offsetTop;
+            //鼠标按下时的位置
+            var __x = __e.clientX - canvas.offsetLeft;
+            var __y = __e.clientY - canvas.offsetTop;
+            pos.x1 = x;
+            pos.y1 = y;
+            pos.x2 = __x;
+            pos.y2 = __y;
+            reDraw(e, pos);
+            var context = canvas.getContext("2d");
+            //context.save();
+
+//		context.clearRect(__x,__y,(_x-__x),(_y-__y));
+//		reDraw(e,pos);
+//		context.fillStyle="rgba(10%,25%,10%,0.1)";  //填充的颜色
+//		context.strokeStyle="000";  //边框颜色
+//		context.linewidth=1;  //边框宽
+//		context.fillRect(x,y,(__x-x),(__y-y));  //填充颜色 x y坐标 宽 高
+            //context.strokeRect(x,y,(__x-x),(__y-y));  //填充边框 x y坐标 宽 高
+            //context.restore();
+
+            context.beginPath();
+            context.setLineDash([5, 2]);
+            context.rect(__x, __y, (_x - __x), (_y - __y));
+            context.stroke();
+
+        }
+
+        window.onload = function () {
+
+            var canvas = document.getElementById('tutorial');
+            draw();//页面载入画出每个圆时，(x,y)都是在路径上，非路径内
+
+            canvas.onmousedown = function (e) {
+                move = false;
+                e = e || event;
+                var x = e.clientX - canvas.offsetLeft;
+                var y = e.clientY - canvas.offsetTop;
+                //if(currentC)	currentC.isCurrent=false;//路径不能保存，对象还是存在的
+                //currentC=null;//清空选中状态
+                /*判断是否点中，点中则改变了当前元素*/
+                if (canvas.getContext) {
+                    var ctx = canvas.getContext('2d');
+                    for (var i = list.length; i--;) {
+                        var c = list[i];
+                        c.testHit(ctx, x, y);
+                        if (hit) break;
+                    }
+                }
+                /*判断点中元素是否在选区中,只有selected长度大于0时才有选区概念*/
+                if (selected.length > 0) {
+                    for (var i = selected.length; i--;) {
+                        var c = selected[i];
+                        if (currentC === selected[i]) {
+                            inZoom = true;
+                            break;
+                        }
+                    }
+                }
+                /*如果点中了并且没有按下ctrl键*/
+                if (hit && !ctrlDown) {
+
+                    if (inZoom) {/*如果点中元素在选区中*/
+                        console.log(selected.length);
+                        console.log('inZoom');
+                        /*按下鼠标，只改变当前选中元素(在检测hit时已经做了)，抬起鼠标时重画：清空选区，显示当前元素*/
+
+                    } else {/*如果点中元素不在选区中*/
+                        /*按下鼠标立刻重画：清空选区，显示当前元素*/
+                        console.log('notinZoom');
+                        selected = [];
+                        reDraw(e);
+                    }
+                } else {
+                    /*没点中，或者按下了ctrl键，就什么都不做，留给鼠标抬起事件*/
+                    //selected=[];
+
+                }
+
+                _e = e;
+                __e = e;
+
+                //showTimer=setInterval(function(e){reDraw(e);},10,_e);//在鼠标移动时不断重画
+                canvas.onmousemove = show;//根据鼠标移动不断改变圆心位置
+
+                document.onmouseup = function () {
+                    /*如果没有移动鼠标，就清除选区,最后的重画只需画出当前元素*/
+                    if (!move) {
+                        if (!hit) {/*如果点空了，清除当前元素、清除选区*/
+                            if (currentC) {
+                                currentC.isCurrent = false;
+                                currentC = null;
+                            }
+                            selected = [];
+                        } else {/*如果点中了*/
+                            hit = false;/*重置点中状态*/
+                            if (ctrlDown) {/*如果按下了ctrl*/
+                                if (!inZoom) {/*如果点中元素不在selected里，就添加，否则从selected里删除，并清空当前元素*/
+                                    selected.push(currentC);
+                                } else {
+                                    if (currentC) {
+                                        currentC.isCurrent = false;
+                                        currentC = null;
+                                    }
+                                    console.log(['splice', selected.length]);
+                                    selected.splice(i, 1);
+                                    console.log(['splice', selected.length]);
+                                }
+                            } else {/*如果没有按下ctrl，直接清空selected，保留当前元素*/
+                                selected = [];
+                            }
+                        }
+                        inZoom = false;
+
+                        reDraw(e);
+                    } else {
+                        move = false;/*如果移动了，重置移动状态*/
+                        hit = false;/*如果移动了，重置点中状态*/
+                        inZoom = false;/*如果移动了，重置是否在选区中的状态*/
+
+                    }
+                    //如果有移动，则不会清除选中状态
+                    //不管是否移动，解除鼠标移动的监听事件
+                    canvas.onmousemove = null;//只允许在鼠标按下后监听鼠标移动事件
+                    //reDraw(e);
+                    clearInterval(showTimer);//鼠标抬起后停止重画
+                    console.log('up');
+                }
+
+            }
+            document.onkeydown = function (e) {
+                var ev = window.event || e;
+
+                console.log(['keydown', ev.keyCode]);
+                switch (ev.keyCode) {
+                    case 17:
+
+                        ctrlDown = true;
+                        break;
+                    case 37:
+                        ev.preventDefault();
+                        directDown = true;
+                        keyboardMove(-1, 0);
+                        break;
+                    case 38:
+                        directDown = true;
+                        ev.preventDefault();
+                        keyboardMove(0, -1);
+                        break;
+                    case 39:
+                        directDown = true;
+                        ev.preventDefault();
+                        keyboardMove(1, 0);
+                        break;
+                    case 40:
+                        directDown = true;
+                        ev.preventDefault();
+                        keyboardMove(0, 1);
+                        break;
+                    case 46:
+                        keyboardDelete();
+                        break;
+                }
+            }
+            document.onkeyup = function (e) {
+                var ev = window.event || e;
+                //ev.preventDefault();
+                console.log(['keyup', ev.keyCode]);
+                switch (ev.keyCode) {
+                    case 17:
+                        ctrlDown = false;
+                        break;
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                        directDown = false;
+                        break;
+                    case 46:
+
+                }
+            }
+        }
+
+        /*键盘方向键控制移动*/
+        function keyboardMove(x, y) {
+            if (selected.length > 0) {
+                for (var i = selected.length; i--;) {
+                    var c = selected[i];
+                    c.x += x;
+                    c.y += y;
+                }
+            } else if (currentC) {
+                currentC.x += x;
+                currentC.y += y;
+            }
+            draw('direct');
+        }
+
+        /*delete键删除元素*/
+        function keyboardDelete() {
+            /*删除选区中的元素*/
+            var tempList = [];
+            if (selected.length > 0) {
+                for (var j = list.length; j--;) {
+                    var flag = true;
+                    for (var i = selected.length; i--;) {
+                        if (list[j] === selected[i]) {
+                            flag = false;
+                            break
+                        }
+                    }
+                    if (flag) {
+                        tempList.push(list[j]);
+                    }
+                }
+                list = tempList;
+            } else if (currentC) {
+                for (var j = list.length; j--;) {
+                    if (list[j] === currentC) {
+                        list.splice(j, 1);
+                        break
+                    }
+                }
+            }
+            draw('delete');
+        }
+
+        /*碰撞检测*/
+        function testCollision(posA, posB) {
+            //console.log(['posA',posA]);
+            //console.log(['posB',posB]);
+            var crossA = lineSpace(posA.x1, posA.y1, posA.x2, posA.y2);
+            var crossB = lineSpace(posB.x1, posB.y1, posB.x2, posB.y2);
+            var centerB = {};
+            var crossPos = {};
+            var centerA = {};
+            var max = {};
+            var min = {};
+            var sh = {};
+            var flag = false;
+            centerA.x = ((posA.x1 - posA.x2) > 0) ? (posA.x1 - (posA.x1 - posA.x2) / 2) : (posA.x2 - (posA.x2 - posA.x1) / 2);
+            centerA.y = ((posA.y1 - posA.y2) > 0) ? (posA.y1 - (posA.y1 - posA.y2) / 2) : (posA.y2 - (posA.y2 - posA.y1) / 2);
+            var centerAToB = lineSpace(centerA.x, centerA.y, posB.x, posB.y);
+            if (centerAToB > ((crossA + crossB) / 2)) {
+                //console.log('4');
+                return flag;
+            }
+            if (posB.angle === 0) {
+                //console.log('5');
+                /*只需比较两矩形的对角点*/
+                /*crossPos:{目标矩形：左上点，右下点，鼠标矩形：左上点，右下点}*/
+                if (posA.x1 > posA.x2 && posA.y1 > posA.y2) {
+                    /*左上到右下*/
+                    crossPos = {
+                        'x1': posB.x1,
+                        'y1': posB.y1,
+                        'x2': posB.x2,
+                        'y2': posB.y2,
+                        'x3': posA.x2,
+                        'y3': posA.y2,
+                        'x4': posA.x1,
+                        'y4': posA.y1
+                    };
+                    flag = simpleTest(crossPos);
+                    return flag;
+                } else if (posA.x1 < posA.x2 && posA.y1 < posA.y2) {
+                    /*右下到左上*/
+                    //console.log('6');
+                    crossPos = {
+                        'x1': posB.x1,
+                        'y1': posB.y1,
+                        'x2': posB.x2,
+                        'y2': posB.y2,
+                        'x3': posA.x1,
+                        'y3': posA.y1,
+                        'x4': posA.x2,
+                        'y4': posA.y2
+                    };
+                    flag = simpleTest(crossPos);
+                    //console.log(flag);
+                    return flag;
+                } else if (posA.x1 < posA.x2 && posA.y1 > posA.y2) {
+                    /*右上到左下*/
+                    var x1 = posA.x1;
+                    var y1 = posA.y2;
+                    var x2 = posA.x2;
+                    var y2 = posA.y1;
+                    crossPos = {
+                        'x1': posB.x1,
+                        'y1': posB.y1,
+                        'x2': posB.x2,
+                        'y2': posB.y2,
+                        'x3': x1,
+                        'y3': y1,
+                        'x4': x2,
+                        'y4': y2
+                    };
+                    flag = simpleTest(crossPos);
+                    return flag;
+
+                } else if (posA.x1 > posA.x2 && posA.y1 < posA.y2) {
+                    /*左下到右上*/
+                    var x1 = posA.x2;
+                    var y1 = posA.y1;
+                    var x2 = posA.x1;
+                    var y2 = posA.y2;
+                    crossPos = {
+                        'x1': posB.x1,
+                        'y1': posB.y1,
+                        'x2': posB.x2,
+                        'y2': posB.y2,
+                        'x3': x1,
+                        'y3': y1,
+                        'x4': x2,
+                        'y4': y2
+                    };
+                    flag = simpleTest(crossPos);
+                    return flag;
+                }
+
+            } else {
+                //console.log('分离定轴定理');
+                /*使用分离定轴定理解决*/
+                /*目标矩形四个点到x、y轴的距离,取最大值*/
+                max.Bx1 = Math.max(posB.x1, posB.x2, posB.x3, posB.x4);
+                max.By1 = Math.max(posB.y1, posB.y2, posB.y3, posB.y4);
+                min.Bx1 = Math.min(posB.x1, posB.x2, posB.x3, posB.x4);
+                min.By1 = Math.min(posB.y1, posB.y2, posB.y3, posB.y4);
+                max.Ax1 = Math.max(posA.x1, posA.x2);
+                max.Ay1 = Math.max(posA.y1, posA.y2);
+                min.Ax1 = Math.min(posA.x1, posA.x2);
+                min.Ay1 = Math.min(posA.y1, posA.y2);
+
+
+                if (max.Bx1 < min.Ax1 || max.Ax1 < min.Bx1 || max.By1 < min.Ay1 || max.Ay1 < min.By1) {
+                    return false;
+                }
+
+
+                /*鼠标拖拽矩形四个点到目标矩形两条垂直边的距离*/
+                /*使用B14的法向量*/
+                sh.x = posB.y4 - posB.y1;
+                sh.y = posB.x1 - posB.x4;
+                sh.x1 = posA.x1 - posA.x3;
+                sh.y1 = posA.y1 - posA.y3;
+                var lineA1 = getShadow(sh);
+                sh.x1 = posA.x1 - posA.x4;
+                sh.y1 = posA.y1 - posA.y4;
+                var lineA2 = getShadow(sh);
+                sh.x1 = posA.x2 - posA.x3;
+                sh.y1 = posA.y2 - posA.y3;
+                var lineA3 = getShadow(sh);
+                sh.x1 = posA.x2 - posA.x4;
+                sh.y1 = posA.y2 - posA.y4;
+                var lineA4 = getShadow(sh);
+                var maxB = lineSpace(posB.x1, posB.y1, posB.x3, posB.y3);
+                var maxA = Math.max(lineA1, lineA2, lineA3, lineA4);
+                var minA = Math.min(lineA1, lineA2, lineA3, lineA4);
+                if (maxB < minA || maxA < 0) {
+                    return false;
+                }
+                /*使用B13的法向量*/
+                sh.x = posB.y3 - posB.y1;
+                sh.y = posB.x1 - posB.x3;
+                sh.x1 = posA.x1 - posA.x3;
+                sh.y1 = posA.y1 - posA.y3;
+                var lineA1 = getShadow(sh);
+                sh.x1 = posA.x1 - posA.x4;
+                sh.y1 = posA.y1 - posA.y4;
+                var lineA2 = getShadow(sh);
+                sh.x1 = posA.x2 - posA.x3;
+                sh.y1 = posA.y2 - posA.y3;
+                var lineA3 = getShadow(sh);
+                sh.x1 = posA.x2 - posA.x4;
+                sh.y1 = posA.y2 - posA.y4;
+                var lineA4 = getShadow(sh);
+                var maxB = lineSpace(posB.x1, posB.y1, posB.x4, posB.y4);
+                var maxA = Math.max(lineA1, lineA2, lineA3, lineA4);
+                var minA = Math.min(lineA1, lineA2, lineA3, lineA4);
+                if (maxB < minA || maxA < 0) {
+                    return false;
+                }
+
+
+                return true;
+            }
+
+
+        }
+
+        /*shadow:{法向量：x,y,投影向量：x1,y1}*/
+        function getShadow(sh) {
+            var temp1, temp2, length;
+            temp1 = sh.x * sh.y1 + sh.y * sh.x1;
+            temp2 = Math.sqrt(sh.x * sh.x + sh.y * sh.y);
+            length = temp1 / temp2;
+            return length;
+        }
+
+        function simpleTest(crossPos) {
+            //console.log(['crossPos',crossPos]);
+            /*左上点*/
+            var maxx = Math.max(crossPos.x1, crossPos.x3);
+            var maxy = Math.max(crossPos.y1, crossPos.y3);
+            /*右下点*/
+            var minx = Math.min(crossPos.x2, crossPos.x4);
+            var miny = Math.min(crossPos.y2, crossPos.y4);
+            if (maxx > minx || maxy > miny) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function pointToLine(x0, y0, x1, y1, x2, y2) {
+            var space = 0;
+            var a = lineSpace(x1, y1, x2, y2);//线段长度
+            var b = lineSpace(x0, y0, x1, y1);//(x1,y1)到点的距离
+            var c = lineSpace(x0, y0, x2, y2);//(x2,y2)到点的距离
+
+            if (c + b === a) {
+                space = 0;
+                return space;
+            }
+            if (a <= 0.000001) {
+                alert('线段太短了');
+                return;
+            }
+            var p = (a + b + c) / 2;
+            var s = Math.sqrt(p * (p - a) * (p - b) * (p - c));
+            space = 2 * s / a;
+            return space;
+        }
+
+        function lineSpace(x1, y1, x2, y2) {
+            var lineLength = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            return lineLength;
+        }
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body style="background:#eeeeee;">
+<canvas id="tutorial" width="1000" height="550" style="z-index:100;display:block;position:absolute;"></canvas>
+</body>
+</html>
