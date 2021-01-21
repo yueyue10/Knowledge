@@ -30,6 +30,12 @@
         #map_status {
             color: blue;
         }
+
+        #error_hint {
+            text-align: center;
+            margin-top: 15px;
+            color: red
+        }
     </style>
     <script type="module" src="main.js"></script>
 </head>
@@ -43,6 +49,7 @@
         <canvas id="seat_canvas" width="300px" height="300px" style="border: #cccccc solid 1px">
             浏览器不支持
         </canvas>
+        <span id="error_hint"></span>
     </div>
     <div class="ver-layout-center" style="margin-left: 20px">
         <span style="margin-bottom: 10px">选择组件</span>

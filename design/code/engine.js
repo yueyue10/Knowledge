@@ -53,12 +53,13 @@ class Rect {
 
 export class SeatMap {
 
-    constructor(canvas_id, seat_span_id, map_status_id) {
+    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id) {
         this.mapStatus = 2;//1:新增 2:编辑
         this.renderList = []
         this.canvas = document.getElementById(canvas_id)
         this.seatView = document.getElementById(seat_span_id);
         this.mapStatusView = document.getElementById(map_status_id);
+        this.errorHintView = document.getElementById(error_hint_id);
         this.seatText = this.seatView.textContent;
         this.ctx = this.canvas.getContext('2d')
         this.canvasInfo = this.canvas.getBoundingClientRect()
@@ -68,17 +69,44 @@ export class SeatMap {
 
     addRect(rectConfig) {
         let target = new Rect(this.ctx, rectConfig, this.seatText)
-        this.addRenderList(target)
+        if (this.computeSuitable(target))
+            this.renderList.push(target)
         return this
     }
 
     addRectInner(rectConfig) {
         let target = new Rect(this.ctx, rectConfig, this.seatText)
-        this.renderList.push(target)
+        if (this.computeSuitable(target))
+            this.renderList.push(target)
     }
 
-    addRenderList(target) {
-        this.renderList.push(target)
+    computeSuitable(rect, leftr = 0, topr = 0) {
+        let rectCache = {left: rect.left + leftr, top: rect.top + topr, width: rect.width, height: rect.height}
+        console.log(rectCache)
+        let suit = true;
+        this.renderList.forEach((it, idx) => {
+            let p1 = {x: it.left, y: it.top}
+            let p2 = {x: it.left + it.width, y: it.top + it.height}
+            let p3 = {x: rectCache.left, y: rectCache.top}
+            let p4 = {x: rectCache.left + rectCache.width, y: rectCache.top + rectCache.height}
+            // debugger
+            let s1 = p2.y < p3.y - 5
+            let s2 = p1.y > p4.y + 5
+            let s3 = p2.x < p3.x - 5
+            let s4 = p1.x > p4.x + 5
+            let ySuit = (s1 || s2 || s3 || s4)
+            // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
+            if (!ySuit) {
+                suit = false
+                // console.log("computeSuitable", `${idx}条冲突`)
+                this.errorHintView.innerText = `和${idx + 1}条冲突`
+            }
+        })
+        if (rectCache.left < 3 || rectCache.left > this.canvasInfo.width - 23 || rectCache.top < 3 || rectCache.top > this.canvasInfo.height - 23) {
+            suit = false
+            this.errorHintView.innerText = "超出边界！"
+        }
+        return suit
     }
 
     painting() {
@@ -101,10 +129,11 @@ export class SeatMap {
         const that = this
         let startX, startY, target
         this.canvas.addEventListener('mousedown', e => {
+            this.errorHintView.innerText = ""
             startX = e.offsetX, startY = e.offsetY
             this.painting()
             if (this.mapStatus == 1) {//如果是添加状态
-                this.addRectInner({left: floatSub(startX, 10), top: floatSub(startY, 10), width: 20, height: 20})
+                this.addRectInner({left: startX - 10, top: startY - 10, width: 20, height: 20})
                 this.painting()
             } else {
                 let chooseIdx = null
@@ -123,16 +152,22 @@ export class SeatMap {
 
         function mouseMoveEvent(e) {
             const currentX = e.offsetX, currentY = e.offsetY
-            target.adjust(currentX - startX, currentY - startY, "move")
-            startX = currentX, startY = currentY
-            that.painting()
+            if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
+                target.adjust(currentX - startX, currentY - startY, "move")
+                startX = currentX, startY = currentY
+                that.painting()
+            }
         }
 
         function mouseUpEvent(e) {
             const currentX = e.offsetX, currentY = e.offsetY
-            target.adjust(currentX - startX, currentY - startY, "up")
-            startX = currentX, startY = currentY
-            that.painting()
+            if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
+                debugger
+                this.errorHintView.innerText = ""
+                target.adjust(currentX - startX, currentY - startY, "up")
+                startX = currentX, startY = currentY
+                that.painting()
+            }
 
             document.removeEventListener('mousemove', mouseMoveEvent)
             document.removeEventListener('mouseup', mouseUpEvent)
