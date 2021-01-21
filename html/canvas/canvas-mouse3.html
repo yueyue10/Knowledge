@@ -386,31 +386,31 @@
 
                 console.log(['keydown', ev.keyCode]);
                 switch (ev.keyCode) {
-                    case 17:
+                    case 17://ctrl
 
                         ctrlDown = true;
                         break;
-                    case 37:
+                    case 37://left
                         ev.preventDefault();
                         directDown = true;
                         keyboardMove(-1, 0);
                         break;
-                    case 38:
+                    case 38://up
                         directDown = true;
                         ev.preventDefault();
                         keyboardMove(0, -1);
                         break;
-                    case 39:
+                    case 39://right
                         directDown = true;
                         ev.preventDefault();
                         keyboardMove(1, 0);
                         break;
-                    case 40:
+                    case 40://down
                         directDown = true;
                         ev.preventDefault();
                         keyboardMove(0, 1);
                         break;
-                    case 46:
+                    case 46://delete
                         keyboardDelete();
                         break;
                 }

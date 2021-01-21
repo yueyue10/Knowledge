@@ -1,0 +1,32 @@
+/* 同样布局样式 */
+.ver-layout, .ver-layout-center, ver-layout-center-all {
+    display: flex;
+    flex-direction: column;
+}
+
+.ver-layout-center {
+    align-items: center;
+}
+
+.ver-layout-center-all {
+    align-items: center;
+    justify-content: center;
+}
+
+.hor-layout, .hor-layout-center, .hor-layout-side, .hor-layout-center-all {
+    display: flex;
+    flex-direction: row;
+}
+
+.hor-layout-center {
+    align-items: center;
+}
+
+.hor-layout-side {
+    justify-content: space-between;
+}
+
+.hor-layout-center-all {
+    align-items: center;
+    justify-content: center;
+}

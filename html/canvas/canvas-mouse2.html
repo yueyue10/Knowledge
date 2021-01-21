@@ -118,8 +118,8 @@
             let startX, startY
 
             canvas.addEventListener('mousedown', e => {
-                startX = e.clientX
-                startY = e.clientY
+                startX = e.offsetX
+                startY = e.offsetY
                 let choosedIndex = null
                 this.renderList.forEach((it, index) => {
                     it.painting()
