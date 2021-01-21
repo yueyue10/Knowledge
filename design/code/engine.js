@@ -15,6 +15,7 @@ class Rect {
         this.height = height
         this.seat_text = seat_text
         this.background = background
+        this.rectId = 0 //唯一标识
     }
 
     adjust(left, top, type) {
@@ -31,7 +32,8 @@ class Rect {
         return isIN
     }
 
-    painting(drawBorder = true) {
+    painting(index, drawBorder = true) {
+        this.rectId = index
         this.ctx.save()
         if (drawBorder) {
             //绘制边框
@@ -47,6 +49,11 @@ class Rect {
         this.ctx.font = this.width + "px iconfont";
         this.ctx.fillStyle = this.background
         this.ctx.fillText(this.seat_text, this.left + this.width / 2, this.top + this.height / 2);
+        if (index) {
+            this.ctx.fillStyle = "#fff"
+            this.ctx.font = "12px Georgia";
+            this.ctx.fillText(index, this.left + this.width / 2, this.top + this.height / 2, 10);
+        }
         this.ctx.restore()
     }
 }
@@ -84,7 +91,11 @@ export class SeatMap {
         let rectCache = {left: rect.left + leftr, top: rect.top + topr, width: rect.width, height: rect.height}
         console.log(rectCache)
         let suit = true;
-        this.renderList.forEach((it, idx) => {
+        let renderList = this.renderList
+        if (rect.rectId) renderList = renderList.filter(ren => {
+            return ren.rectId != rect.rectId
+        })
+        renderList.forEach((it, idx) => {
             let p1 = {x: it.left, y: it.top}
             let p2 = {x: it.left + it.width, y: it.top + it.height}
             let p3 = {x: rectCache.left, y: rectCache.top}
@@ -112,7 +123,7 @@ export class SeatMap {
     painting() {
         console.log("数据长度：", this.renderList.length)
         this.ctx.clearRect(0, 0, this.canvasInfo.width, this.canvasInfo.height)
-        this.renderList.forEach(it => it.painting())
+        this.renderList.forEach((it, index) => it.painting(index + 1))
         this.ctx.restore()
     }
 
@@ -131,22 +142,29 @@ export class SeatMap {
         this.canvas.addEventListener('mousedown', e => {
             this.errorHintView.innerText = ""
             startX = e.offsetX, startY = e.offsetY
-            this.painting()
             if (this.mapStatus == 1) {//如果是添加状态
                 this.addRectInner({left: startX - 10, top: startY - 10, width: 20, height: 20})
                 this.painting()
             } else {
-                let chooseIdx = null
-                this.renderList.forEach((it, idx) => {
-                    if (it.isPointIn(startX, startY)) {
-                        chooseIdx = idx
-                    }
-                })
-                if (chooseIdx == null)
-                    return
-                target = that.renderList[chooseIdx]
-                document.addEventListener('mousemove', mouseMoveEvent)
-                document.addEventListener('mouseup', mouseUpEvent)
+                if (target != null) {
+                    target.adjust(0, 0, "up")
+                    this.painting()
+                    target = null
+                    document.removeEventListener('mousemove', mouseMoveEvent)
+                    document.removeEventListener('mouseup', mouseUpEvent)
+                } else {
+                    let chooseIdx = null
+                    this.renderList.forEach((it, idx) => {
+                        if (it.isPointIn(startX, startY)) {
+                            chooseIdx = idx
+                        }
+                    })
+                    if (chooseIdx == null)
+                        return
+                    target = that.renderList[chooseIdx]
+                    document.addEventListener('mousemove', mouseMoveEvent)
+                    document.addEventListener('mouseup', mouseUpEvent)
+                }
             }
         })
 
@@ -162,7 +180,6 @@ export class SeatMap {
         function mouseUpEvent(e) {
             const currentX = e.offsetX, currentY = e.offsetY
             if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
-                debugger
                 this.errorHintView.innerText = ""
                 target.adjust(currentX - startX, currentY - startY, "up")
                 startX = currentX, startY = currentY
