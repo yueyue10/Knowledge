@@ -1,5 +1,3 @@
-import {floatAdd, floatSub} from "./utils.js"
-
 class Rect {
     constructor(ctx, {
         top = 0,
@@ -133,6 +131,7 @@ export class SeatMap {
             this.seatView.style.color = this.mapStatus == 1 ? "red" : "#838388";
             this.mapStatusView.style.color = this.mapStatus == 1 ? "red" : "blue";
             this.mapStatusView.innerHTML = this.mapStatus == 1 ? "添加状态" : "编辑状态";
+            if (this.mapStatus == 2) this.errorHintView.innerText = ""
         })
     }
 
@@ -146,13 +145,11 @@ export class SeatMap {
                 this.addRectInner({left: startX - 10, top: startY - 10, width: 20, height: 20})
                 this.painting()
             } else {
-                if (target != null) {
+                if (target != null) {//如果有的话，就反选
                     target.adjust(0, 0, "up")
                     this.painting()
                     target = null
-                    document.removeEventListener('mousemove', mouseMoveEvent)
-                    document.removeEventListener('mouseup', mouseUpEvent)
-                } else {
+                } else {//没有的话就设置target
                     let chooseIdx = null
                     this.renderList.forEach((it, idx) => {
                         if (it.isPointIn(startX, startY)) {
@@ -162,33 +159,30 @@ export class SeatMap {
                     if (chooseIdx == null)
                         return
                     target = that.renderList[chooseIdx]
-                    document.addEventListener('mousemove', mouseMoveEvent)
-                    document.addEventListener('mouseup', mouseUpEvent)
                 }
             }
         })
-
-        function mouseMoveEvent(e) {
-            const currentX = e.offsetX, currentY = e.offsetY
-            if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
-                target.adjust(currentX - startX, currentY - startY, "move")
-                startX = currentX, startY = currentY
-                that.painting()
+        this.canvas.addEventListener('mousemove', e => {
+            if (this.mapStatus != 1 && target != null) {
+                const currentX = e.offsetX, currentY = e.offsetY
+                if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
+                    target.adjust(currentX - startX, currentY - startY, "move")
+                    startX = currentX, startY = currentY
+                    that.painting()
+                }
             }
-        }
-
-        function mouseUpEvent(e) {
-            const currentX = e.offsetX, currentY = e.offsetY
-            if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
-                this.errorHintView.innerText = ""
-                target.adjust(currentX - startX, currentY - startY, "up")
-                startX = currentX, startY = currentY
-                that.painting()
+        })
+        this.canvas.addEventListener('mouseup', e => {
+            if (this.mapStatus != 1 && target != null) {
+                const currentX = e.offsetX, currentY = e.offsetY
+                if (that.computeSuitable(target, currentX - startX, currentY - startY)) {
+                    this.errorHintView.innerText = ""
+                    target.adjust(currentX - startX, currentY - startY, "up")
+                    startX = currentX, startY = currentY
+                    that.painting()
+                }
             }
-
-            document.removeEventListener('mousemove', mouseMoveEvent)
-            document.removeEventListener('mouseup', mouseUpEvent)
-        }
+        })
     }
 }
 

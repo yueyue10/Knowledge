@@ -1,95 +1,39 @@
-//检查两个长方形是否有重叠部分参考：https://www.cnblogs.com/programnote/p/4691608.html
-
-/* 计算合理性
- * selWidgets:选中的组件数组 [{startPoint,endPoint}]
- * processType:操作类型 add，move，copy
- * actionPoints:事件的坐标点数组
+/* 计算合理性-此方法只针对单个元素操作
+ * widgetList:画布中已经放置的组件
+ * widget:操作的组件
+ * canvasInfo:画布信息
+ * leftr:向左移动距离-如果是新增,此参数可以不填
+ * topr:向右移动距离-同上
  */
-let computeDownSuitable = function (selWidgets, processType, actionPoints) {
-    //actionType:事件类型 鼠标点击类型:point、框选类型:section
-    let actionType = actionPoints.length > 1 ? 'section' : 'point'
-    if (processType == "add" && actionType == "point") {//添加只有一个组件类型，selWidgets里面只有一个
-        if (selWidgets.length != 1) throw new Error('内部异常')
-        let selPoint = selWidgets[0] //选中的点
-        this.widgets.forEach(wid => {
-            let p1 = wid.startPoint
-            let p2 = wid.endPoint
-            let p3 = selPoint.startPoint
-            let p4 = selPoint.endPoint
-            if (p1.y < p3.y || p1.y > p4.y || p2.x < p3.x || p1.x > p4.x) {
-
-            }
-        })
-    } else if (processType == "add" && actionType == "select") {
-
+let computeDownSuitable = function (widgetList, widget, canvasInfo, leftr = 0, topr = 0) {
+    let widgetCache = {left: widget.left + leftr, top: widget.top + topr, width: widget.width, height: widget.height}
+    console.log(widgetCache)
+    let suit = true;
+    //判断是否有[widgetId]属性,可以确定是新增还是修改;如果是修改,则过滤掉已经实例化的widget
+    if (widget.widgetId) widgetList = widgetList.filter(wid => {
+        return wid.widgetId != widget.widgetId
+    })
+    //遍历画布中的所有组件,和目标组件进行检测;检测方法参考:https://www.cnblogs.com/programnote/p/4691608.html
+    widgetList.forEach((it, idx) => {
+        let p1 = {x: it.left, y: it.top}
+        let p2 = {x: it.left + it.width, y: it.top + it.height}
+        let p3 = {x: widgetCache.left, y: widgetCache.top}
+        let p4 = {x: widgetCache.left + widgetCache.width, y: widgetCache.top + widgetCache.height}
+        // debugger
+        let s1 = p2.y < p3.y - 5
+        let s2 = p1.y > p4.y + 5
+        let s3 = p2.x < p3.x - 5
+        let s4 = p1.x > p4.x + 5
+        let ySuit = (s1 || s2 || s3 || s4)
+        // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
+        if (!ySuit) {
+            suit = false
+            this.errorHintView.innerText = `和${idx + 1}条冲突`
+        }
+    })
+    if (widgetCache.left < 3 || widgetCache.left > canvasInfo.width - 23 || widgetCache.top < 3 || widgetCache.top > canvasInfo.height - 23) {
+        suit = false
+        this.errorHintView.innerText = "超出边界！"
     }
-}
-
-//加
-export function floatAdd(arg1, arg2) {
-    var r1, r2, m;
-    try {
-        r1 = arg1.toString().split(".")[1].length
-    } catch (e) {
-        r1 = 0
-    }
-    try {
-        r2 = arg2.toString().split(".")[1].length
-    } catch (e) {
-        r2 = 0
-    }
-    m = Math.pow(10, Math.max(r1, r2));
-    return (arg1 * m + arg2 * m) / m;
-}
-
-//减
-export function floatSub(arg1, arg2) {
-    var r1, r2, m, n;
-    try {
-        r1 = arg1.toString().split(".")[1].length
-    } catch (e) {
-        r1 = 0
-    }
-    try {
-        r2 = arg2.toString().split(".")[1].length
-    } catch (e) {
-        r2 = 0
-    }
-    m = Math.pow(10, Math.max(r1, r2));
-    //动态控制精度长度
-    n = (r1 >= r2) ? r1 : r2;
-    return ((arg1 * m - arg2 * m) / m).toFixed(n);
-}
-
-//乘
-export function floatMul(arg1, arg2) {
-    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-    try {
-        m += s1.split(".")[1].length
-    } catch (e) {
-    }
-    try {
-        m += s2.split(".")[1].length
-    } catch (e) {
-    }
-    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
-}
-
-
-//除
-export function floatDiv(arg1, arg2) {
-    var t1 = 0, t2 = 0, r1, r2;
-    try {
-        t1 = arg1.toString().split(".")[1].length
-    } catch (e) {
-    }
-    try {
-        t2 = arg2.toString().split(".")[1].length
-    } catch (e) {
-    }
-
-    r1 = Number(arg1.toString().replace(".", ""));
-
-    r2 = Number(arg2.toString().replace(".", ""));
-    return (r1 / r2) * Math.pow(10, t2 - t1);
+    return suit
 }
