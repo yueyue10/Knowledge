@@ -261,12 +261,12 @@ export class SeatMap {
     }
 
     addMapEvent() {
-        let startX, startY, target, downEp, trans, area,
-            that = this
-        this.canvas.addEventListener('mousedown', e => {
+        let startX, startY, target, downEp, trans, area, that = this
+
+        //鼠标落下事件
+        let mouseDown = e => {
             // debugger
             if (e.button == 2) {//鼠标右击事件
-
                 return
             }
             startX = e.offsetX, startY = e.offsetY
@@ -302,8 +302,11 @@ export class SeatMap {
             } else if (this.mapStatus == 3) {
                 trans = 1
             }
-        })
-        this.canvas.addEventListener('mousemove', e => {
+        }
+        /**
+         * 鼠标移动事件
+         */
+        let mouseMove = e => {
             // debugger
             const currentX = e.offsetX, currentY = e.offsetY
             if (this.mapStatus == 1)
@@ -326,18 +329,27 @@ export class SeatMap {
                 this.translateMap(currentX - startX, currentY - startY)
                 startX = currentX, startY = currentY
             }
-        })
-        this.canvas.addEventListener('mouseup', e => {
+        }
+        /*
+         * 鼠标放开监听
+         */
+        let mouseUp = e => {
             const currentX = e.offsetX, currentY = e.offsetY
             this.errorHintView.innerText = ""
             trans = 0
-        })
-        this.canvas.addEventListener("mousewheel", event => {
+        }
+        /**
+         * 鼠标滚轮监听
+         */
+        let mouseWheel = event => {
             console.log("mousewheel", event.wheelDelta)
             let delta = event.wheelDelta ? (event.wheelDelta / 120) : (-event.detail / 3);
             this.zoomMap(delta > 0 ? "1" : "-1")
-        }, false);
-        document.onkeydown = function (e) {
+        }
+        /**
+         * 键盘输入监听
+         */
+        let keyInput = e => {
             let ev = window.event || e;
             console.log(['keydown', ev.keyCode]);
             switch (ev.keyCode) {
@@ -362,15 +374,6 @@ export class SeatMap {
             }
             that.painting()
         }
-        this.canvas.oncontextmenu = (event) => {
-            event.preventDefault();
-            this.contextMenuView.style.display = 'block';
-            this.contextMenuView.style.left = event.clientX + 'px';
-            this.contextMenuView.style.top = event.clientY + 'px';
-        }
-        document.onclick = function (event) {
-            that.contextMenuView.style.display = 'none';
-        }
 
         function deleteArea(renderList) {
             let index = renderList.findIndex(ren => {
@@ -386,6 +389,24 @@ export class SeatMap {
             })
             return clickRect
         }
+
+        //统一添加事件
+        this.canvas.addEventListener('mousedown', mouseDown)
+        this.canvas.addEventListener('mousemove', mouseMove)
+        this.canvas.addEventListener('mouseup', mouseUp)
+        this.canvas.addEventListener("mousewheel", mouseWheel, false)
+        document.onkeydown = keyInput;//键盘输入事件
+        //右键菜单逻辑
+        this.canvas.oncontextmenu = (event) => {
+            event.preventDefault();
+            if (target || area) {
+                this.contextMenuView.style.display = 'block';
+                this.contextMenuView.style.left = event.clientX + 'px';
+                this.contextMenuView.style.top = event.clientY + 'px';
+            }
+        }
+        document.onclick = function (event) {
+            that.contextMenuView.style.display = 'none';
+        }
     }
 }
-
