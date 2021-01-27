@@ -46,6 +46,35 @@
             color: white;
             background: #0bace6;
         }
+
+        ul {
+            display: none;
+            background: white;
+            box-shadow: 0px 0px 5px;
+            text-align: center;
+            width: 160px;
+            position: absolute;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            height: 34px;
+            line-height: 34px;
+            font-size: 16px;
+            list-style: none;
+            border-bottom: 1px solid #eee;
+        }
+
+        li:last-child {
+            border-bottom: none;
+            height: 35px;
+            line-height: 35px;
+        }
+
+        li:hover {
+            background-color: #eee;
+        }
     </style>
     <script type="module" src="main.js"></script>
 </head>
@@ -74,5 +103,11 @@
         </div>
     </div>
 </div>
+<!--隐藏标签-->
+<ul id='context-menu'>
+    <li>复制</li>
+    <li>移动</li>
+    <li>删除</li>
+</ul>
 </body>
 </html>

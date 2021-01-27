@@ -103,7 +103,7 @@ const config = {
 
 export class SeatMap {
 
-    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id) {
+    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id, menu_id) {
         this.mapStatus = 2;//1:新增 2:编辑 3:平移
         this.zoomValue = 1;
         this.renderList = []
@@ -113,6 +113,7 @@ export class SeatMap {
         this.errorHintView = document.getElementById(error_hint_id);
         this.resetZoomView = document.getElementById(reset_zoom_id);
         this.translateView = document.getElementById(set_translate_id);
+        this.contextMenuView = document.getElementById(menu_id);
         this.seatText = this.seatView.textContent;
         this.initConfig()
         this.addSpanEvent()
@@ -360,6 +361,15 @@ export class SeatMap {
                     break;
             }
             that.painting()
+        }
+        this.canvas.oncontextmenu = (event) => {
+            event.preventDefault();
+            this.contextMenuView.style.display = 'block';
+            this.contextMenuView.style.left = event.clientX + 'px';
+            this.contextMenuView.style.top = event.clientY + 'px';
+        }
+        document.onclick = function (event) {
+            that.contextMenuView.style.display = 'none';
         }
 
         function deleteArea(renderList) {
