@@ -34,7 +34,7 @@ class Rect {
         return isIN
     }
 
-    painting(index, drawBorder = true) {
+    painting(index, drawBorder = false) {
         this.rectId = index
         this.ctx.save()
         if (drawBorder) {
@@ -137,6 +137,13 @@ export class SeatMap {
         let target = new Rect(this.ctx, rectConfig, this.seatText)
         if (this.computeSuitable(target))
             this.renderList.push(target)
+    }
+
+    deleteRect(rect) {
+        let index = this.renderList.findIndex(ren => {
+            return ren == rect
+        })
+        this.renderList.splice(index, 1);
     }
 
     addSelectArea(areaConfig) {
@@ -253,9 +260,14 @@ export class SeatMap {
     }
 
     addMapEvent() {
-        let startX, startY, target, downEp, trans, area
+        let startX, startY, target, downEp, trans, area,
+            that = this
         this.canvas.addEventListener('mousedown', e => {
             // debugger
+            if (e.button == 2) {//鼠标右击事件
+
+                return
+            }
             startX = e.offsetX, startY = e.offsetY
             if (this.mapStatus == 1) {//如果是添加状态
                 this.addRectInner({
@@ -324,6 +336,31 @@ export class SeatMap {
             let delta = event.wheelDelta ? (event.wheelDelta / 120) : (-event.detail / 3);
             this.zoomMap(delta > 0 ? "1" : "-1")
         }, false);
+        document.onkeydown = function (e) {
+            let ev = window.event || e;
+            console.log(['keydown', ev.keyCode]);
+            switch (ev.keyCode) {
+                case 17://ctrl
+                    break;
+                case 37://left
+                    if (target) target.adjust(-2, 0)
+                    break;
+                case 38://up
+                    if (target) target.adjust(0, -2)
+                    break;
+                case 39://right
+                    if (target) target.adjust(2, 0)
+                    break;
+                case 40://down
+                    if (target) target.adjust(0, 2)
+                    break;
+                case 46://delete
+                    if (target) that.deleteRect(target)
+                    target = null;
+                    break;
+            }
+            that.painting()
+        }
 
         function deleteArea(renderList) {
             let index = renderList.findIndex(ren => {
