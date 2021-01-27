@@ -84,10 +84,21 @@ class SelectArea {
 
     painting() {
         this.ctx.save();
-        this.ctx.setLineDash([5])
+        this.ctx.lineWidth = 2
+        this.ctx.setLineDash([5, 1])
+        this.ctx.strokeStyle = "#345f04"
         this.ctx.strokeRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
         this.ctx.restore();
     }
+}
+
+const rectNum = [20, 15]
+const config = {
+    width: 6 * 2 + 30 * rectNum[0],
+    height: 6 * 2 + 30 * rectNum[1],
+    mapPadding: 5,
+    rectDivide: 5,
+    rectWidth: 20
 }
 
 export class SeatMap {
@@ -103,10 +114,16 @@ export class SeatMap {
         this.resetZoomView = document.getElementById(reset_zoom_id);
         this.translateView = document.getElementById(set_translate_id);
         this.seatText = this.seatView.textContent;
-        this.ctx = this.canvas.getContext('2d')
-        this.canvasInfo = this.canvas.getBoundingClientRect()
+        this.initConfig()
         this.addSpanEvent()
         this.addMapEvent()
+    }
+
+    initConfig() {
+        this.canvas.width = config.width
+        this.canvas.height = config.height
+        this.ctx = this.canvas.getContext('2d')
+        this.canvasInfo = this.canvas.getBoundingClientRect()
     }
 
     addRect(rectConfig) {
@@ -128,8 +145,14 @@ export class SeatMap {
         return target
     }
 
-    computeSuitable(rect, leftr = 0, topr = 0) {
-        let rectCache = {left: rect.left + leftr, top: rect.top + topr, width: rect.width, height: rect.height}
+    computeSuitable(rect, leftScroll = 0, topScroll = 0) {
+        this.errorHintView.innerText = ""
+        let rectCache = {
+            left: rect.left + leftScroll,
+            top: rect.top + topScroll,
+            width: rect.width,
+            height: rect.height
+        }
         console.log(rectCache)
         let suit = true;
         let renderList = this.renderList
@@ -142,10 +165,10 @@ export class SeatMap {
             let p3 = {x: rectCache.left, y: rectCache.top}
             let p4 = {x: rectCache.left + rectCache.width, y: rectCache.top + rectCache.height}
             // debugger
-            let s1 = p2.y < p3.y - 5
-            let s2 = p1.y > p4.y + 5
-            let s3 = p2.x < p3.x - 5
-            let s4 = p1.x > p4.x + 5
+            let s1 = p2.y < p3.y - config.rectDivide
+            let s2 = p1.y > p4.y + config.rectDivide
+            let s3 = p2.x < p3.x - config.rectDivide
+            let s4 = p1.x > p4.x + config.rectDivide
             let ySuit = (s1 || s2 || s3 || s4)
             // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
             if (!ySuit) {
@@ -154,7 +177,9 @@ export class SeatMap {
                 this.errorHintView.innerText = `和${idx + 1}条冲突`
             }
         })
-        if (rectCache.left < 3 || rectCache.left > this.canvasInfo.width - 23 || rectCache.top < 3 || rectCache.top > this.canvasInfo.height - 23) {
+        let leftSize = config.mapPadding + 3;
+        let rightSize = config.mapPadding + 3 + rectCache.width;
+        if (rectCache.left < leftSize || rectCache.left > this.canvasInfo.width - rightSize || rectCache.top < leftSize || rectCache.top > this.canvasInfo.height - rightSize) {
             suit = false
             this.errorHintView.innerText = "超出边界！"
         }
@@ -163,9 +188,30 @@ export class SeatMap {
 
     drawBorder() {
         console.log("drawBorder", this.zoomValue)
+        let padding = config.mapPadding
         this.ctx.save()
-        this.ctx.strokeRect(5, 5, (this.canvasInfo.width - 12) * this.zoomValue, (this.canvasInfo.height - 12) * this.zoomValue)
+        this.ctx.strokeRect(padding, padding, (this.canvasInfo.width - 2 * padding) * this.zoomValue, (this.canvasInfo.height - 2 * padding) * this.zoomValue)
         this.ctx.restore()
+        let margin = config.mapPadding + 2
+        let rectWidth = config.rectWidth + config.rectDivide * 2
+        for (let i = 1; i <= (this.canvasInfo.width - margin * 2) / rectWidth; i++) {
+            this.ctx.beginPath()
+            this.ctx.lineWidth = 0.3
+            this.ctx.moveTo(rectWidth * i + margin, margin)
+            this.ctx.lineTo(margin + i * rectWidth, this.canvasInfo.height - margin)
+            this.ctx.strokeStyle = "#0000ff"
+            this.ctx.stroke()
+            this.ctx.closePath()
+        }
+        for (let i = 1; i <= (this.canvasInfo.height - margin * 2) / rectWidth; i++) {
+            this.ctx.beginPath()
+            this.ctx.lineWidth = 0.3
+            this.ctx.moveTo(margin, rectWidth * i + margin)
+            this.ctx.lineTo(this.canvasInfo.width - margin, rectWidth * i + margin)
+            this.ctx.strokeStyle = "#0000ff"
+            this.ctx.stroke()
+            this.ctx.closePath()
+        }
     }
 
     zoomMap(type) {
@@ -210,10 +256,14 @@ export class SeatMap {
         let startX, startY, target, downEp, trans, area
         this.canvas.addEventListener('mousedown', e => {
             // debugger
-            this.errorHintView.innerText = ""
             startX = e.offsetX, startY = e.offsetY
             if (this.mapStatus == 1) {//如果是添加状态
-                this.addRectInner({left: startX - 10, top: startY - 10, width: 20, height: 20})
+                this.addRectInner({
+                    left: startX - config.rectWidth / 2,
+                    top: startY - config.rectWidth / 2,
+                    width: config.rectWidth,
+                    height: config.rectWidth
+                })
                 this.painting()
             } else if (this.mapStatus == 2) {
                 if (target != null) {//如果有的话，就反选
@@ -266,10 +316,7 @@ export class SeatMap {
         })
         this.canvas.addEventListener('mouseup', e => {
             const currentX = e.offsetX, currentY = e.offsetY
-            if (this.mapStatus != 1 && target != null) {
-                this.errorHintView.innerText = ""
-                this.painting()
-            }
+            this.errorHintView.innerText = ""
             trans = 0
         })
         this.canvas.addEventListener("mousewheel", event => {
