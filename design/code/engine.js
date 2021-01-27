@@ -92,13 +92,16 @@ class SelectArea {
 
 export class SeatMap {
 
-    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id) {
-        this.mapStatus = 2;//1:新增 2:编辑
+    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id) {
+        this.mapStatus = 2;//1:新增 2:编辑 3:平移
+        this.zoomValue = 1;
         this.renderList = []
         this.canvas = document.getElementById(canvas_id)
         this.seatView = document.getElementById(seat_span_id);
         this.mapStatusView = document.getElementById(map_status_id);
         this.errorHintView = document.getElementById(error_hint_id);
+        this.resetZoomView = document.getElementById(reset_zoom_id);
+        this.translateView = document.getElementById(set_translate_id);
         this.seatText = this.seatView.textContent;
         this.ctx = this.canvas.getContext('2d')
         this.canvasInfo = this.canvas.getBoundingClientRect()
@@ -158,11 +161,31 @@ export class SeatMap {
         return suit
     }
 
+    drawBorder() {
+        console.log("drawBorder", this.zoomValue)
+        this.ctx.save()
+        this.ctx.strokeRect(5, 5, (this.canvasInfo.width - 12) * this.zoomValue, (this.canvasInfo.height - 12) * this.zoomValue)
+        this.ctx.restore()
+    }
+
+    zoomMap(type) {
+        let zoom = {'0': 1, '-1': 0.99, '1': 1.01}
+        let scale = type == '0' ? 1 / this.zoomValue : zoom[type]
+        this.zoomValue = type == '0' ? 1 : zoom[type] * this.zoomValue
+        this.ctx.scale(scale, scale);
+        this.painting()
+    }
+
+    translateMap(xScroll, yScroll) {
+        this.ctx.translate(xScroll, yScroll)
+        this.painting()
+    }
+
     painting() {
         console.log("数据长度：", this.renderList.length)
         this.ctx.clearRect(0, 0, this.canvasInfo.width, this.canvasInfo.height)
+        this.drawBorder()
         this.renderList.forEach((it, index) => it.painting(index + 1))
-        this.ctx.restore()
     }
 
     addSpanEvent() {
@@ -173,10 +196,18 @@ export class SeatMap {
             this.mapStatusView.innerHTML = this.mapStatus == 1 ? "添加状态" : "编辑状态";
             if (this.mapStatus == 2) this.errorHintView.innerText = ""
         })
+        this.resetZoomView.addEventListener("click", () => {
+            this.zoomMap("0")
+        })
+        this.translateView.addEventListener("click", () => {
+            this.mapStatus = this.mapStatus != 3 ? 3 : 2;
+            this.translateView.className = this.mapStatus == 3 ? "select-view" : ""
+            this.mapStatusView.innerText = this.mapStatus == 3 ? "平移状态" : "编辑状态"
+        })
     }
 
     addMapEvent() {
-        let startX, startY, target, downEp, area
+        let startX, startY, target, downEp, trans, area
         this.canvas.addEventListener('mousedown', e => {
             // debugger
             this.errorHintView.innerText = ""
@@ -184,7 +215,7 @@ export class SeatMap {
             if (this.mapStatus == 1) {//如果是添加状态
                 this.addRectInner({left: startX - 10, top: startY - 10, width: 20, height: 20})
                 this.painting()
-            } else {
+            } else if (this.mapStatus == 2) {
                 if (target != null) {//如果有的话，就反选
                     target.adjust(0, 0)
                     target.setSelected(false)
@@ -205,6 +236,8 @@ export class SeatMap {
                     downEp = target == undefined ? 1 : 0
                     this.painting()
                 }
+            } else if (this.mapStatus == 3) {
+                trans = 1
             }
         })
         this.canvas.addEventListener('mousemove', e => {
@@ -212,18 +245,23 @@ export class SeatMap {
             const currentX = e.offsetX, currentY = e.offsetY
             if (this.mapStatus == 1)
                 return
-            if (target != null) {
-                if (this.computeSuitable(target, currentX - startX, currentY - startY)) {
-                    target.adjust(currentX - startX, currentY - startY)
-                    startX = currentX, startY = currentY
+            if (this.mapStatus == 2)
+                if (target != null) {
+                    if (this.computeSuitable(target, currentX - startX, currentY - startY)) {
+                        target.adjust(currentX - startX, currentY - startY)
+                        startX = currentX, startY = currentY
+                        this.painting()
+                    }
+                } else if (downEp == 1) {
+                    if (area == null)
+                        area = this.addSelectArea({x1: startX, y1: startY, x2: currentX, y2: currentY})
+                    else
+                        area.adjust(currentX, currentY)
                     this.painting()
                 }
-            } else if (downEp == 1) {
-                if (area == null)
-                    area = this.addSelectArea({x1: startX, y1: startY, x2: currentX, y2: currentY})
-                else
-                    area.adjust(currentX, currentY)
-                this.painting()
+            if (this.mapStatus == 3 && trans == 1) {//只有拖动的时候才移动
+                this.translateMap(currentX - startX, currentY - startY)
+                startX = currentX, startY = currentY
             }
         })
         this.canvas.addEventListener('mouseup', e => {
@@ -232,7 +270,13 @@ export class SeatMap {
                 this.errorHintView.innerText = ""
                 this.painting()
             }
+            trans = 0
         })
+        this.canvas.addEventListener("mousewheel", event => {
+            console.log("mousewheel", event.wheelDelta)
+            let delta = event.wheelDelta ? (event.wheelDelta / 120) : (-event.detail / 3);
+            this.zoomMap(delta > 0 ? "1" : "-1")
+        }, false);
 
         function deleteArea(renderList) {
             let index = renderList.findIndex(ren => {

@@ -36,12 +36,21 @@
             margin-top: 15px;
             color: red
         }
+
+        button {
+            width: fit-content;
+        }
+
+        .select-view {
+            color: white;
+            background: #0bace6;
+        }
     </style>
     <script type="module" src="main.js"></script>
 </head>
 <body>
 <div class="hor-layout-center-all" style="margin-top: 100px">
-    <div class="ver-layout">
+    <div class="ver-layout-center">
         <div style="margin-bottom: 20px">
             座位图创建测试
             <span id="map_status">编辑状态</span>
@@ -50,6 +59,10 @@
             浏览器不支持
         </canvas>
         <span id="error_hint"></span>
+        <div class="hor-layout-center">
+            <button id="reset_zoom_btn">恢复缩放</button>
+            <button id="set_translate_btn">切换平移状态</button>
+        </div>
     </div>
     <div class="ver-layout-center" style="margin-left: 20px">
         <span style="margin-bottom: 10px">选择组件</span>
