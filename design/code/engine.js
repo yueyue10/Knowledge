@@ -252,7 +252,12 @@ export class SeatMap {
                     updateSelRect({}, false)
                 } else if (area != null) {
                     if (clickEp == 1) clickEp = 2
-                    else if (clickEp == 2) deleteArea(this.renderList)
+                    else if (clickEp == 2) {
+                        if (area.isPointIn(startX, startY)) clickEp = 3
+                        else deleteArea(this.renderList)
+                    } else if (clickEp == 3) {
+                        clickEp = 2
+                    }
                 } else {
                     getDownRect(this.renderList, startX, startY)
                     clickEp = target ? 0 : 1//如果点击区域没有元素，就设置点击次数为1
@@ -277,6 +282,10 @@ export class SeatMap {
                     }
                 } else if (clickEp == 1) {
                     area = this.selectArea(area, {x1: startX, y1: startY, x2: currentX, y2: currentY})
+                } else if (clickEp == 3 && area != null) {
+                    area.moveXY({left: currentX - startX, top: currentY - startY})
+                    startX = currentX, startY = currentY
+                    this.painting()
                 }
             if (this.mapStatus == 3 && transDn == 1) {//只有拖动的时候才移动
                 this.translateMap(currentX - startX, currentY - startY)
@@ -298,6 +307,7 @@ export class SeatMap {
             console.log("mousewheel", event.wheelDelta)
             let delta = event.wheelDelta ? (event.wheelDelta / 120) : (-event.detail / 3);
             this.zoomMap(delta > 0 ? "1" : "-1")
+            this.resetZoomView.disabled = false
         }
         /**
          * 键盘输入监听

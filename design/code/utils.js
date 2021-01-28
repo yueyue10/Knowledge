@@ -84,6 +84,21 @@ export class SelectArea {
         this.y2 = y2
     }
 
+    moveXY({left = 0, top = 0}) {
+        this.x1 += left
+        this.x2 += left
+        this.y1 += top
+        this.y2 += top
+    }
+
+    isPointIn(x, y) {
+        this.ctx.beginPath()
+        this.ctx.rect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+        let isIN = this.ctx.isPointInPath(x, y)
+        this.ctx.closePath()
+        return isIN
+    }
+
     painting() {
         this.ctx.save();
         this.ctx.lineWidth = 2
