@@ -1,39 +1,93 @@
-/* 计算合理性-此方法只针对单个元素操作
- * widgetList:画布中已经放置的组件
- * widget:操作的组件
- * canvasInfo:画布信息
- * leftr:向左移动距离-如果是新增,此参数可以不填
- * topr:向右移动距离-同上
- */
-let computeDownSuitable = function (widgetList, widget, canvasInfo, leftr = 0, topr = 0) {
-    let widgetCache = {left: widget.left + leftr, top: widget.top + topr, width: widget.width, height: widget.height}
-    console.log(widgetCache)
-    let suit = true;
-    //判断是否有[widgetId]属性,可以确定是新增还是修改;如果是修改,则过滤掉已经实例化的widget
-    if (widget.widgetId) widgetList = widgetList.filter(wid => {
-        return wid.widgetId != widget.widgetId
-    })
-    //遍历画布中的所有组件,和目标组件进行检测;检测方法参考:https://www.cnblogs.com/programnote/p/4691608.html
-    widgetList.forEach((it, idx) => {
-        let p1 = {x: it.left, y: it.top}
-        let p2 = {x: it.left + it.width, y: it.top + it.height}
-        let p3 = {x: widgetCache.left, y: widgetCache.top}
-        let p4 = {x: widgetCache.left + widgetCache.width, y: widgetCache.top + widgetCache.height}
-        // debugger
-        let s1 = p2.y < p3.y - 5
-        let s2 = p1.y > p4.y + 5
-        let s3 = p2.x < p3.x - 5
-        let s4 = p1.x > p4.x + 5
-        let ySuit = (s1 || s2 || s3 || s4)
-        // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
-        if (!ySuit) {
-            suit = false
-            this.errorHintView.innerText = `和${idx + 1}条冲突`
-        }
-    })
-    if (widgetCache.left < 3 || widgetCache.left > canvasInfo.width - 23 || widgetCache.top < 3 || widgetCache.top > canvasInfo.height - 23) {
-        suit = false
-        this.errorHintView.innerText = "超出边界！"
+//座位
+export class Rect {
+    constructor(ctx, {
+        top = 0,
+        left = 0,
+        width = 0,
+        height = 0,
+        background = '#f4a41e'
+    }, seat_text) {
+        this.ctx = ctx
+        this.top = top
+        this.left = left
+        this.width = width
+        this.height = height
+        this.seat_text = seat_text
+        this.background = background
+        this.rectId = 0 //唯一标识
     }
-    return suit
+
+    adjust(left, top) {
+        this.left += left
+        this.top += top
+    }
+
+    setSelected(sel) {
+        this.background = sel ? "red" : "#f4a41e"
+    }
+
+    isPointIn(x, y) {
+        this.ctx.beginPath()
+        this.ctx.rect(this.left, this.top, this.width, this.height);
+        let isIN = this.ctx.isPointInPath(x, y)
+        this.ctx.closePath()
+        return isIN
+    }
+
+    painting(index, drawBorder = false) {
+        this.rectId = index
+        this.ctx.save()
+        if (drawBorder) {
+            //绘制边框
+            this.ctx.beginPath()
+            this.ctx.rect(this.left, this.top, this.width, this.height)
+            this.ctx.fillStyle = this.background
+            this.ctx.stroke()
+            this.ctx.closePath()
+        }
+        //绘制图形
+        this.ctx.textAlign = "center"
+        this.ctx.textBaseline = "middle";
+        this.ctx.font = this.width + "px iconfont";
+        this.ctx.fillStyle = this.background
+        this.ctx.fillText(this.seat_text, this.left + this.width / 2, this.top + this.height / 2);
+        if (index) {
+            this.ctx.font = "10px Arial";
+            this.ctx.fillStyle = "#fff"
+            this.ctx.fillText(index, this.left + this.width / 2, this.top + this.height / 2);
+        }
+        this.ctx.restore()
+    }
+}
+
+//选中区域
+export class SelectArea {
+    constructor(ctx, {
+        x1 = 0,
+        y1 = 0,
+        x2 = 0,
+        y2 = 0,
+        background = '#f4a41e'
+    }) {
+        this.ctx = ctx
+        this.x1 = x1
+        this.y1 = y1
+        this.x2 = x2
+        this.y2 = y2
+        this.background = background
+    }
+
+    adjust(x2, y2) {
+        this.x2 = x2
+        this.y2 = y2
+    }
+
+    painting() {
+        this.ctx.save();
+        this.ctx.lineWidth = 2
+        this.ctx.setLineDash([5, 1])
+        this.ctx.strokeStyle = "#345f04"
+        this.ctx.strokeRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+        this.ctx.restore();
+    }
 }
