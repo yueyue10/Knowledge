@@ -52,9 +52,9 @@ class Rect {
         this.ctx.fillStyle = this.background
         this.ctx.fillText(this.seat_text, this.left + this.width / 2, this.top + this.height / 2);
         if (index) {
+            this.ctx.font = "10px Arial";
             this.ctx.fillStyle = "#fff"
-            this.ctx.font = "12px Georgia";
-            this.ctx.fillText(index, this.left + this.width / 2, this.top + this.height / 2, 10);
+            this.ctx.fillText(index, this.left + this.width / 2, this.top + this.height / 2);
         }
         this.ctx.restore()
     }
@@ -103,9 +103,10 @@ const config = {
 
 export class SeatMap {
 
-    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id, menu_id) {
+    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id, menu_id, auto_add_id) {
         this.mapStatus = 2;//1:新增 2:编辑 3:平移
         this.zoomValue = 1;
+        this.scaleValue = 1
         this.renderList = []
         this.canvas = document.getElementById(canvas_id)
         this.seatView = document.getElementById(seat_span_id);
@@ -114,6 +115,7 @@ export class SeatMap {
         this.resetZoomView = document.getElementById(reset_zoom_id);
         this.translateView = document.getElementById(set_translate_id);
         this.contextMenuView = document.getElementById(menu_id);
+        this.autoAddView = document.getElementById(auto_add_id);
         this.seatText = this.seatView.textContent;
         this.initConfig()
         this.addSpanEvent()
@@ -138,6 +140,7 @@ export class SeatMap {
         let target = new Rect(this.ctx, rectConfig, this.seatText)
         if (this.computeSuitable(target))
             this.renderList.push(target)
+        this.painting()
     }
 
     deleteRect(rect) {
@@ -197,9 +200,7 @@ export class SeatMap {
     drawBorder() {
         console.log("drawBorder", this.zoomValue)
         let padding = config.mapPadding
-        this.ctx.save()
-        this.ctx.strokeRect(padding, padding, (this.canvasInfo.width - 2 * padding) * this.zoomValue, (this.canvasInfo.height - 2 * padding) * this.zoomValue)
-        this.ctx.restore()
+        this.ctx.strokeRect(padding, padding, (this.canvasInfo.width - 2 * padding - 2) * this.scaleValue, (this.canvasInfo.height - 2 * padding - 2) * this.scaleValue)
         let margin = config.mapPadding + 2
         let rectWidth = config.rectWidth + config.rectDivide * 2
         for (let i = 1; i <= (this.canvasInfo.width - margin * 2) / rectWidth; i++) {
@@ -222,11 +223,27 @@ export class SeatMap {
         }
     }
 
+    autoAddRect() {
+        this.painting()
+        let row = 0, col = 0
+        let timer = setInterval(() => {
+            this.addRectInner({
+                left: config.mapPadding + 2 + 5 + row * 30,
+                top: config.mapPadding + 2 + 5 + col * 30,
+                width: 20,
+                height: 20
+            })
+            if (row < rectNum[0] - 1) row++
+            else row = 0, col++
+            if (col == rectNum[1]) clearInterval(timer), this.mapStatus = 2, this.mapStatusView.innerHTML = "编辑状态"
+        }, 20)
+    }
+
     zoomMap(type) {
         let zoom = {'0': 1, '-1': 0.99, '1': 1.01}
-        let scale = type == '0' ? 1 / this.zoomValue : zoom[type]
+        this.scaleValue = type == '0' ? 1 / this.zoomValue : zoom[type]
         this.zoomValue = type == '0' ? 1 : zoom[type] * this.zoomValue
-        this.ctx.scale(scale, scale);
+        this.ctx.scale(this.scaleValue, this.scaleValue);
         this.painting()
     }
 
@@ -258,6 +275,12 @@ export class SeatMap {
             this.translateView.className = this.mapStatus == 3 ? "select-view" : ""
             this.mapStatusView.innerText = this.mapStatus == 3 ? "平移状态" : "编辑状态"
         })
+        this.autoAddView.addEventListener("click", () => {
+            this.mapStatus = 1
+            this.mapStatusView.innerHTML = "添加状态"
+            this.autoAddView.disabled = true
+            this.autoAddRect()
+        })
     }
 
     addMapEvent() {
@@ -277,7 +300,6 @@ export class SeatMap {
                     width: config.rectWidth,
                     height: config.rectWidth
                 })
-                this.painting()
             } else if (this.mapStatus == 2) {
                 if (target != null) {//如果有的话，就反选
                     target.adjust(0, 0)
@@ -356,23 +378,34 @@ export class SeatMap {
                 case 17://ctrl
                     break;
                 case 37://left
-                    if (target) target.adjust(-2, 0)
+                    if (this.computeSuitable(target, -2, 0)) {
+                        target.adjust(-2, 0)
+                        this.painting()
+                    }
                     break;
                 case 38://up
-                    if (target) target.adjust(0, -2)
+                    if (this.computeSuitable(target, 0, -2)) {
+                        target.adjust(0, -2)
+                        this.painting()
+                    }
                     break;
                 case 39://right
-                    if (target) target.adjust(2, 0)
+                    if (this.computeSuitable(target, 2, 0)) {
+                        target.adjust(2, 0)
+                        this.painting()
+                    }
                     break;
                 case 40://down
-                    if (target) target.adjust(0, 2)
+                    if (this.computeSuitable(target, 0, 2)) {
+                        target.adjust(0, 2)
+                        this.painting()
+                    }
                     break;
                 case 46://delete
                     if (target) that.deleteRect(target)
                     target = null;
                     break;
             }
-            that.painting()
         }
 
         function deleteArea(renderList) {
