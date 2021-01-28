@@ -15,6 +15,7 @@ export class Rect {
         this.seat_text = seat_text
         this.background = background
         this.rectId = 0 //唯一标识
+        this.selected = false//是否被选中
     }
 
     adjust(left, top) {
@@ -23,6 +24,7 @@ export class Rect {
     }
 
     setSelected(sel) {
+        this.selected = sel
         this.background = sel ? "red" : "#f4a41e"
     }
 
@@ -87,7 +89,9 @@ export class SelectArea {
         this.ctx.lineWidth = 2
         this.ctx.setLineDash([5, 1])
         this.ctx.strokeStyle = "#345f04"
+        this.ctx.fillStyle = "rgba(155, 187, 89, 0.7)"
         this.ctx.strokeRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+        this.ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1)
         this.ctx.restore();
     }
 }

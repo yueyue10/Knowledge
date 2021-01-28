@@ -1,40 +1,65 @@
 import {Rect, SelectArea} from "./utils.js"
+//座椅配置
+const rectConf = {
+    col: 20,
+    row: 15,
+    divide: 5,
+    width: 20
+}
+//画布配置
+const mapConf = {
+    map: {
+        width: 6 * 2 + 30 * rectConf.col,
+        height: 6 * 2 + 30 * rectConf.row,
+        padding: 5,
+    },
+    viewIds: {
+        canvas: 'seat_canvas',
+        seatView: 'unselect_seat_span',
+        mapStatusView: "map_status",
+        errorHintView: "error_hint",
+        resetZoomView: "reset_zoom_btn",
+        translateView: "set_translate_btn",
+        contextMenuView: "context-menu",
+        autoAddView: "auto_add_btn"
+    }
+}
 
-const rectNum = [20, 15]
-const config = {
-    width: 6 * 2 + 30 * rectNum[0],
-    height: 6 * 2 + 30 * rectNum[1],
-    mapPadding: 5,
-    rectDivide: 5,
-    rectWidth: 20
+function getViewById(view_id) {
+    return document.getElementById(mapConf.viewIds[view_id])
 }
 
 export class SeatMap {
 
-    constructor(canvas_id, seat_span_id, map_status_id, error_hint_id, reset_zoom_id, set_translate_id, menu_id, auto_add_id) {
+    constructor() {
         this.mapStatus = 2;//1:新增 2:编辑 3:平移
         this.zoomValue = 1;
         this.scaleValue = 1
         this.renderList = []
-        this.canvas = document.getElementById(canvas_id)
-        this.seatView = document.getElementById(seat_span_id);
-        this.mapStatusView = document.getElementById(map_status_id);
-        this.errorHintView = document.getElementById(error_hint_id);
-        this.resetZoomView = document.getElementById(reset_zoom_id);
-        this.translateView = document.getElementById(set_translate_id);
-        this.contextMenuView = document.getElementById(menu_id);
-        this.autoAddView = document.getElementById(auto_add_id);
-        this.seatText = this.seatView.textContent;
-        this.initConfig()
+        this.initCanvasView()
+        this.initDisplayView()
         this.addSpanEvent()
         this.addMapEvent()
     }
 
-    initConfig() {
-        this.canvas.width = config.width
-        this.canvas.height = config.height
+
+    initCanvasView() {
+        this.canvas = getViewById('canvas')
+        this.canvas.width = mapConf.map.width
+        this.canvas.height = mapConf.map.height
         this.ctx = this.canvas.getContext('2d')
         this.canvasInfo = this.canvas.getBoundingClientRect()
+    }
+
+    initDisplayView() {
+        this.seatView = getViewById('seatView');
+        this.mapStatusView = getViewById('mapStatusView');
+        this.errorHintView = getViewById('errorHintView');
+        this.resetZoomView = getViewById('resetZoomView');
+        this.translateView = getViewById('translateView');
+        this.contextMenuView = getViewById('contextMenuView');
+        this.autoAddView = getViewById('autoAddView');
+        this.seatText = this.seatView.textContent;
     }
 
     addRect(rectConfig) {
@@ -44,24 +69,28 @@ export class SeatMap {
         return this
     }
 
-    addRectInner(rectConfig) {
-        let target = new Rect(this.ctx, rectConfig, this.seatText)
-        if (this.computeSuitable(target))
-            this.renderList.push(target)
+    addRectInner(x, y) {
+        let width = rectConf.width
+        let target = new Rect(this.ctx, {left: x, top: y, width: width, height: width}, this.seatText)
+        let suit = this.computeSuitable(target)
+        if (suit) this.renderList.push(target)
         this.painting()
+        return suit
     }
 
-    deleteRect(rect) {
-        let index = this.renderList.findIndex(ren => {
-            return ren == rect
+    selectArea(area, areaCon) {
+        if (area == null) area = new SelectArea(this.ctx, areaCon), this.renderList.push(area)
+        else area.adjust(areaCon.x2, areaCon.y2)
+        let rectList = this.renderList.filter(ren => {
+            return ren.constructor.name != "SelectArea"
         })
-        this.renderList.splice(index, 1);
-    }
-
-    addSelectArea(areaConfig) {
-        let target = new SelectArea(this.ctx, areaConfig)
-        this.renderList.push(target)
-        return target
+        rectList.forEach(rect => {
+            if (rect.left > area.x1 && rect.left + rect.width < area.x2 && rect.top > area.y1 && rect.top + rect.height < area.y2)
+                rect.setSelected(true)
+            else rect.setSelected(false)
+        })
+        this.painting()
+        return area
     }
 
     computeSuitable(rect, leftScroll = 0, topScroll = 0) {
@@ -84,10 +113,10 @@ export class SeatMap {
             let p3 = {x: rectCache.left, y: rectCache.top}
             let p4 = {x: rectCache.left + rectCache.width, y: rectCache.top + rectCache.height}
             // debugger
-            let s1 = p2.y < p3.y - config.rectDivide
-            let s2 = p1.y > p4.y + config.rectDivide
-            let s3 = p2.x < p3.x - config.rectDivide
-            let s4 = p1.x > p4.x + config.rectDivide
+            let s1 = p2.y < p3.y - rectConf.divide
+            let s2 = p1.y > p4.y + rectConf.divide
+            let s3 = p2.x < p3.x - rectConf.divide
+            let s4 = p1.x > p4.x + rectConf.divide
             let ySuit = (s1 || s2 || s3 || s4)
             // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
             if (!ySuit) {
@@ -96,8 +125,8 @@ export class SeatMap {
                 this.errorHintView.innerText = `和${idx + 1}条冲突`
             }
         })
-        let leftSize = config.mapPadding + 3;
-        let rightSize = config.mapPadding + 3 + rectCache.width;
+        let leftSize = mapConf.map.padding + 3;
+        let rightSize = mapConf.map.padding + 3 + rectCache.width;
         if (rectCache.left < leftSize || rectCache.left > this.canvasInfo.width - rightSize || rectCache.top < leftSize || rectCache.top > this.canvasInfo.height - rightSize) {
             suit = false
             this.errorHintView.innerText = "超出边界！"
@@ -107,10 +136,10 @@ export class SeatMap {
 
     drawBorder() {
         console.log("drawBorder", this.zoomValue)
-        let padding = config.mapPadding
+        let padding = mapConf.map.padding
         this.ctx.strokeRect(padding, padding, (this.canvasInfo.width - 2 * padding - 2) * this.scaleValue, (this.canvasInfo.height - 2 * padding - 2) * this.scaleValue)
-        let margin = config.mapPadding + 2
-        let rectWidth = config.rectWidth + config.rectDivide * 2
+        let margin = mapConf.map.padding + 2
+        let rectWidth = rectConf.width + rectConf.divide * 2
         for (let i = 1; i <= (this.canvasInfo.width - margin * 2) / rectWidth; i++) {
             this.ctx.beginPath()
             this.ctx.lineWidth = 0.3
@@ -133,18 +162,13 @@ export class SeatMap {
 
     autoAddRect() {
         this.painting()
-        let row = 0, col = 0
+        let col = 0, row = 0, rectMargin = mapConf.map.padding + 2 + 5
         let timer = setInterval(() => {
-            this.addRectInner({
-                left: config.mapPadding + 2 + 5 + row * 30,
-                top: config.mapPadding + 2 + 5 + col * 30,
-                width: 20,
-                height: 20
-            })
-            if (row < rectNum[0] - 1) row++
-            else row = 0, col++
-            if (col == rectNum[1]) clearInterval(timer), this.mapStatus = 2, this.mapStatusView.innerHTML = "编辑状态"
-        }, 20)
+            let suit = this.addRectInner(rectMargin + col * 30, rectMargin + row * 30)
+            if (col < rectConf.col - 1) col++
+            else col = 0, row++
+            if (row == rectConf.row || !suit) clearInterval(timer), this.mapStatus = 2, this.mapStatusView.innerHTML = "编辑状态"
+        }, 0)
     }
 
     zoomMap(type) {
@@ -185,14 +209,18 @@ export class SeatMap {
         })
         this.autoAddView.addEventListener("click", () => {
             this.mapStatus = 1
-            this.mapStatusView.innerHTML = "添加状态"
             this.autoAddView.disabled = true
+            this.mapStatusView.innerHTML = "添加状态"
             this.autoAddRect()
         })
     }
 
     addMapEvent() {
-        let startX, startY, target, downEp, trans, area, that = this
+        /**
+         * clickEp：点击空白区域次数
+         * transDn：平移状态点击次数
+         */
+        let startX, startY, target, clickEp, transDn, area, that = this
 
         //鼠标落下事件
         let mouseDown = e => {
@@ -202,35 +230,20 @@ export class SeatMap {
             }
             startX = e.offsetX, startY = e.offsetY
             if (this.mapStatus == 1) {//如果是添加状态
-                this.addRectInner({
-                    left: startX - config.rectWidth / 2,
-                    top: startY - config.rectWidth / 2,
-                    width: config.rectWidth,
-                    height: config.rectWidth
-                })
+                let halfWidth = rectConf.width / 2
+                this.addRectInner(startX - halfWidth, startY - halfWidth)
             } else if (this.mapStatus == 2) {
                 if (target != null) {//如果有的话，就反选
-                    target.adjust(0, 0)
-                    target.setSelected(false)
-                    target = null
-                    this.painting()
+                    updateSelRect({}, false)
                 } else if (area != null) {
-                    if (downEp == 1) {
-                        downEp = 2
-                    } else if (downEp == 2) {
-                        deleteArea(this.renderList)
-                        area = null
-                        downEp = null
-                        this.painting()
-                    }
+                    if (clickEp == 1) clickEp = 2
+                    else if (clickEp == 2) deleteArea(this.renderList)
                 } else {
-                    target = getDownRect(this.renderList, startX, startY)
-                    if (target) target.setSelected(true)
-                    downEp = target == undefined ? 1 : 0
-                    this.painting()
+                    getDownRect(this.renderList, startX, startY)
+                    clickEp = target ? 0 : 1//如果点击区域没有元素，就设置点击次数为1
                 }
             } else if (this.mapStatus == 3) {
-                trans = 1
+                transDn = 1
             }
         }
         /**
@@ -244,18 +257,13 @@ export class SeatMap {
             if (this.mapStatus == 2)
                 if (target != null) {
                     if (this.computeSuitable(target, currentX - startX, currentY - startY)) {
-                        target.adjust(currentX - startX, currentY - startY)
+                        updateSelRect({x: currentX - startX, y: currentY - startY})
                         startX = currentX, startY = currentY
-                        this.painting()
                     }
-                } else if (downEp == 1) {
-                    if (area == null)
-                        area = this.addSelectArea({x1: startX, y1: startY, x2: currentX, y2: currentY})
-                    else
-                        area.adjust(currentX, currentY)
-                    this.painting()
+                } else if (clickEp == 1) {
+                    area = this.selectArea(area, {x1: startX, y1: startY, x2: currentX, y2: currentY})
                 }
-            if (this.mapStatus == 3 && trans == 1) {//只有拖动的时候才移动
+            if (this.mapStatus == 3 && transDn == 1) {//只有拖动的时候才移动
                 this.translateMap(currentX - startX, currentY - startY)
                 startX = currentX, startY = currentY
             }
@@ -266,7 +274,7 @@ export class SeatMap {
         let mouseUp = e => {
             const currentX = e.offsetX, currentY = e.offsetY
             this.errorHintView.innerText = ""
-            trans = 0
+            transDn = 0
         }
         /**
          * 鼠标滚轮监听
@@ -284,53 +292,37 @@ export class SeatMap {
             console.log(['keydown', ev.keyCode]);
             switch (ev.keyCode) {
                 case 13://enter
-                    if (target) {
-                        target.adjust(0, 0)
-                        target.setSelected(false)
-                        this.painting()
-                        target = null
-                        this.errorHintView.innerText = ""
-                    }
+                    updateSelRect({}, false)
                     break;
                 case 17://ctrl
                     break;
-                case 27:
-                    if (target) {
-                        target.setSelected(false)
-                        this.painting()
-                        target = null
-                        this.errorHintView.innerText = ""
-                    }
+                case 27://esc
+                    updateSelRect({}, false)
                     break
                 case 37://left
-                    if (target && this.computeSuitable(target, -2, 0)) {
-                        target.adjust(-2, 0)
-                        this.painting()
-                    }
+                    if (target && this.computeSuitable(target, -2, 0)) updateSelRect({x: -2, y: 0})
                     break;
                 case 38://up
-                    if (target && this.computeSuitable(target, 0, -2)) {
-                        target.adjust(0, -2)
-                        this.painting()
-                    }
+                    if (target && this.computeSuitable(target, 0, -2)) updateSelRect({x: 0, y: -2})
                     break;
                 case 39://right
-                    if (target && this.computeSuitable(target, 2, 0)) {
-                        target.adjust(2, 0)
-                        this.painting()
-                    }
+                    if (target && this.computeSuitable(target, 2, 0)) updateSelRect({x: 2, y: 0})
                     break;
                 case 40://down
-                    if (target && this.computeSuitable(target, 0, 2)) {
-                        target.adjust(0, 2)
-                        this.painting()
-                    }
+                    if (target && this.computeSuitable(target, 0, 2)) updateSelRect({x: 0, y: 2})
                     break;
                 case 46://delete
-                    if (target) that.deleteRect(target)
-                    target = null;
+                    if (target) deleteRects(this.renderList), target = null
+                    if (area) deleteRects(this.renderList), area = null
                     break;
             }
+        }
+
+        function updateSelRect({x = 0, y = 0}, sel = true) {
+            target.adjust(x, y)
+            target.setSelected(sel)
+            that.painting()
+            if (!sel) target = null, that.errorHintView.innerText = ""
         }
 
         function deleteArea(renderList) {
@@ -338,14 +330,29 @@ export class SeatMap {
                 return ren.constructor.name == "SelectArea"
             })
             renderList.splice(index, 1);
+            renderList.forEach(ren => {
+                ren.setSelected(false)
+            })
+            area = null
+            clickEp = 0
+            that.painting()
+        }
+
+        function deleteRects(renderList) {
+            let filRenderList = renderList.filter(ren => {
+                return !ren.selected && ren.constructor.name != "SelectArea";
+            })
+            that.renderList = filRenderList;
+            that.painting()
+            clickEp = 0
         }
 
         function getDownRect(renderList, x, y) {
-            let clickRect = renderList.find(ren => {
-                if (ren.isPointIn(x, y))
-                    return ren
+            target = renderList.find(ren => {
+                if (ren.isPointIn(x, y)) return ren
             })
-            return clickRect
+            if (target) target.setSelected(true)
+            that.painting()
         }
 
         //统一添加事件
