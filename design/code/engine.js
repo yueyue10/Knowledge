@@ -375,28 +375,45 @@ export class SeatMap {
             let ev = window.event || e;
             console.log(['keydown', ev.keyCode]);
             switch (ev.keyCode) {
+                case 13://enter
+                    if (target) {
+                        target.adjust(0, 0)
+                        target.setSelected(false)
+                        this.painting()
+                        target = null
+                        this.errorHintView.innerText = ""
+                    }
+                    break;
                 case 17://ctrl
                     break;
+                case 27:
+                    if (target) {
+                        target.setSelected(false)
+                        this.painting()
+                        target = null
+                        this.errorHintView.innerText = ""
+                    }
+                    break
                 case 37://left
-                    if (this.computeSuitable(target, -2, 0)) {
+                    if (target && this.computeSuitable(target, -2, 0)) {
                         target.adjust(-2, 0)
                         this.painting()
                     }
                     break;
                 case 38://up
-                    if (this.computeSuitable(target, 0, -2)) {
+                    if (target && this.computeSuitable(target, 0, -2)) {
                         target.adjust(0, -2)
                         this.painting()
                     }
                     break;
                 case 39://right
-                    if (this.computeSuitable(target, 2, 0)) {
+                    if (target && this.computeSuitable(target, 2, 0)) {
                         target.adjust(2, 0)
                         this.painting()
                     }
                     break;
                 case 40://down
-                    if (this.computeSuitable(target, 0, 2)) {
+                    if (target && this.computeSuitable(target, 0, 2)) {
                         target.adjust(0, 2)
                         this.painting()
                     }

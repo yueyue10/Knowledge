@@ -58,5 +58,29 @@
     document.onclick = function (event) {
         el.style.display = 'none';
     }
+    var canvas = document.createElement('canvas');
+    canvas.width = 500;
+    canvas.height = 500;
+    canvas.style.backgroundColor = '#ddd';
+    document.body.appendChild(canvas);
+
+    var ctx = canvas.getContext('2d');
+    var x = 100,
+        y = 100,
+        width = 150,
+        height = 150,
+        rectCenterPoint = {x: x+width/2, y: y+height/2}, // 矩形中心点
+        scaleX = 0.5,
+        scaleY = 0.4;
+
+    // 缩放前(红色矩形)
+    ctx.fillStyle = '#f00';
+    ctx.fillRect(x, y, width, height);
+
+    // 缩放后(绿色矩形)
+    ctx.translate(rectCenterPoint.x*(1-scaleX), rectCenterPoint.y*(1-scaleY));
+    ctx.scale(scaleX, scaleY);
+    ctx.fillStyle = '#690';
+    ctx.fillRect(x, y, width, height);
 </script>
 </html>
