@@ -21,12 +21,17 @@ const mapConf = {
         resetZoomView: "reset_zoom_btn",
         translateView: "set_translate_btn",
         contextMenuView: "context-menu",
-        autoAddView: "auto_add_btn"
+        autoAddView: "auto_add_btn",
+        contextDelete: "#context-menu>#delete"
     }
 }
 
 function getViewById(view_id) {
     return document.getElementById(mapConf.viewIds[view_id])
+}
+
+function getViewByTag(tag_id) {
+    return document.querySelector(mapConf.viewIds[tag_id]);
 }
 
 export class SeatMap {
@@ -59,6 +64,7 @@ export class SeatMap {
         this.translateView = getViewById('translateView');
         this.contextMenuView = getViewById('contextMenuView');
         this.autoAddView = getViewById('autoAddView');
+        this.contextDelete = getViewByTag('contextDelete');
         this.seatText = this.seatView.textContent;
     }
 
@@ -85,7 +91,16 @@ export class SeatMap {
             return ren.constructor.name != "SelectArea"
         })
         rectList.forEach(rect => {
-            if (rect.left > area.x1 && rect.left + rect.width < area.x2 && rect.top > area.y1 && rect.top + rect.height < area.y2)
+            let p1, p2, p3 = {x: rect.left, y: rect.top}, p4 = {x: rect.left + rect.width, y: rect.top + rect.height}
+            if (area.x1 < area.x2 && area.y1 < area.y2)//向右下角划动
+                p1 = {x: area.x1, y: area.y1}, p2 = {x: area.x2, y: area.y2}
+            if (area.x1 < area.x2 && area.y1 > area.y2)//向右上角划动
+                p1 = {x: area.x1, y: area.y2}, p2 = {x: area.x2, y: area.y1}
+            if (area.x1 > area.x2 && area.y1 > area.y2)//向左上角划动
+                p1 = {x: area.x2, y: area.y2}, p2 = {x: area.x1, y: area.y1}
+            if (area.x1 > area.x2 && area.y1 < area.y2)//向左下角划动
+                p1 = {x: area.x2, y: area.y1}, p2 = {x: area.x1, y: area.y2}
+            if (p3.x > p1.x && p3.y > p1.y && p4.x < p2.x && p4.y < p2.y)
                 rect.setSelected(true)
             else rect.setSelected(false)
         })
@@ -312,8 +327,8 @@ export class SeatMap {
                     if (target && this.computeSuitable(target, 0, 2)) updateSelRect({x: 0, y: 2})
                     break;
                 case 46://delete
-                    if (target) deleteRects(this.renderList), target = null
-                    if (area) deleteRects(this.renderList), area = null
+                    if (target) deleteRects(this.renderList)
+                    if (area) deleteRects(this.renderList)
                     break;
             }
         }
@@ -326,13 +341,13 @@ export class SeatMap {
         }
 
         function deleteArea(renderList) {
-            let index = renderList.findIndex(ren => {
-                return ren.constructor.name == "SelectArea"
+            let filRenderList = renderList.filter(ren => {
+                return ren.constructor.name != "SelectArea"
             })
-            renderList.splice(index, 1);
-            renderList.forEach(ren => {
+            filRenderList.forEach(ren => {
                 ren.setSelected(false)
             })
+            that.renderList = filRenderList
             area = null
             clickEp = 0
             that.painting()
@@ -344,6 +359,8 @@ export class SeatMap {
             })
             that.renderList = filRenderList;
             that.painting()
+            target = null
+            area = null
             clickEp = 0
         }
 
@@ -370,8 +387,13 @@ export class SeatMap {
                 this.contextMenuView.style.top = event.clientY + 'px';
             }
         }
+        //文档点击右键菜单消失
         document.onclick = function (event) {
             that.contextMenuView.style.display = 'none';
         }
+        //
+        this.contextDelete.addEventListener("click", () => {
+            deleteRects(this.renderList)
+        })
     }
 }

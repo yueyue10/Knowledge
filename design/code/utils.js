@@ -89,7 +89,7 @@ export class SelectArea {
         this.ctx.lineWidth = 2
         this.ctx.setLineDash([5, 1])
         this.ctx.strokeStyle = "#345f04"
-        this.ctx.fillStyle = "rgba(155, 187, 89, 0.7)"
+        this.ctx.fillStyle = "rgba(155, 187, 89, 0.5)"
         this.ctx.strokeRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
         this.ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1)
         this.ctx.restore();
