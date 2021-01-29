@@ -4,95 +4,44 @@
     <meta charset="UTF-8">
     <title>座位图画布</title>
     <link rel="stylesheet" href="comm.css"/>
-    <style>
-        @font-face {
-            font-family: "iconfont";
-            src: url('iconfont.eot?t=1608886077133'); /* IE9 */
-            src: url('iconfont.eot?t=1608886077133#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('data:application/x-font-woff2;charset=utf-8;base64,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') format('woff2'),
-            url('iconfont.woff?t=1608886077133') format('woff'),
-            url('iconfont.ttf?t=1608886077133') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */ url('iconfont.svg?t=1608886077133#iconfont') format('svg'); /* iOS 4.1- */
-        }
-
-        .iconfont {
-            font-family: "iconfont" !important;
-            font-size: 16px;
-            font-style: normal;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        .widget-layout {
-            width: 50px;
-            padding: 10px 0px;
-            border: #4a4e50 1px solid;
-        }
-
-        #map_status {
-            color: blue;
-        }
-
-        #error_hint {
-            text-align: center;
-            margin-top: 15px;
-            color: red
-        }
-
-        button {
-            width: fit-content;
-            margin-right: 5px;
-        }
-
-        .select-view {
-            color: white;
-            background: #0bace6;
-        }
-
-        ul {
-            display: none;
-            background: white;
-            box-shadow: 0px 0px 5px;
-            text-align: center;
-            width: 100px;
-            position: absolute;
-            margin: 0;
-            padding: 0;
-        }
-
-        li {
-            height: 25px;
-            line-height: 25px;
-            font-size: 13px;
-            list-style: none;
-            border-bottom: 1px solid #eee;
-        }
-
-        li:last-child {
-            border-bottom: none;
-            height: 35px;
-            line-height: 35px;
-        }
-
-        li:hover {
-            background-color: #eee;
-        }
-    </style>
     <script type="module" src="main.js"></script>
+    <link rel="icon" type="image/png" sizes="144x144" href="seat.png"/>
 </head>
 <body>
-<div class="hor-layout-center-all" style="margin-top: 100px">
+<!--内容布局-->
+<div class="hor-layout-center-all" style="margin-top: 20px">
+    <div class="ver-layout func-desc">
+        <h2 style="text-align: center">功能说明</h2>
+        <span class="func-title">一、对画布修改</span>
+        <span class="func-content">1.输入<b>[行数]</b>和<b>[列数]</b>，点击<b>[修改]</b>可以修改画布中的格数及大小.</span>
+        <span class="func-content">2.在画布中使用<b>[鼠标滚轮]</b>可以缩放画布，点击<b>[2.恢复缩放前状态]</b>可以重置缩放.</span>
+        <span class="func-content">2.点击<b>[3.切换平移状态]</b>后，可以拖动画布进行平移，再次点击可以取消平移.</span>
+        <span class="func-title">二、画布状态修改</span>
+        <span class="func-content">1.点击<b>[选择组件框中的组件]</b>后，进入<b>[添加组件状态]</b>，可以在画布中添加组件。再次点击取消该状态.</span>
+        <span class="func-content">2.点击<b>[1.自动填充]</b>后，进入<b>[自动添加组件状态]</b>，自动添加完成后按钮不可用.</span>
+        <span class="func-content">3.在<b>[编辑状态]</b>下可以对画布中的组件进行<b>[单击选中]</b><b>[框选]</b>.</span>
+        <span class="func-content">3.1在组件<b>[选中状态]</b>下可以对选中组件进行<b>[右击删除]</b>、<b>[Delete删除]</b>、<b>[Left/Right/Up/Down移动]</b>
+            <b>[单击取消选中]</b>、<b>[Esc取消选中]</b>、<b>[Enter取消选中]</b>.</span>
+    </div>
     <div class="ver-layout-center">
-        <div style="margin-bottom: 20px">
+        <div style="margin-bottom: 5px">
             座位图创建测试
             <span id="map_status">编辑状态</span>
+        </div>
+        <div class="hor-layout-center" style="margin-bottom: 5px">
+            <span>列数:</span><input id="rect-col-span" min="1" value="25" type="number" class="input-view">
+            <span>行数:</span><input id="rect-row-span" min="1" value="15" type="number" class="input-view">
+            <button id="modify_rect_conf">修改</button>
         </div>
         <canvas id="seat_canvas" width="300px" height="300px" style="border: #cccccc solid 1px">
             浏览器不支持
         </canvas>
         <span id="error_hint"></span>
         <div class="hor-layout-center">
-            <button id="auto_add_btn">自动填充</button>
-            <button id="reset_zoom_btn" disabled="true">恢复缩放</button>
-            <button id="set_translate_btn">切换平移状态</button>
+            <button id="auto_add_btn">1.自动填充</button>
+            <button id="reset_zoom_btn" disabled="true">2.恢复缩放前状态</button>
+            <button id="set_translate_btn">3.切换平移状态</button>
+            <span class="func-hint-view">(2.3.两个功能有bug)</span>
         </div>
     </div>
     <div class="ver-layout-center" style="margin-left: 20px">

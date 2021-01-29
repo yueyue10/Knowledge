@@ -1,13 +1,13 @@
 import {Rect, SelectArea} from "./utils.js"
 //座椅配置
-const rectConf = {
-    col: 20,
+let rectConf = {
+    col: 25,
     row: 15,
     divide: 5,
     width: 20
 }
 //画布配置
-const mapConf = {
+let mapConf = {
     map: {
         width: 6 * 2 + 30 * rectConf.col,
         height: 6 * 2 + 30 * rectConf.row,
@@ -22,7 +22,11 @@ const mapConf = {
         translateView: "set_translate_btn",
         contextMenuView: "context-menu",
         autoAddView: "auto_add_btn",
-        contextDelete: "#context-menu>#delete"
+        contextCopy: "#context-menu>#copy",
+        contextDelete: "#context-menu>#delete",
+        modifyRectConf: "modify_rect_conf",
+        rectColConSpan: "rect-col-span",
+        rectRowConSpan: "rect-row-span",
     }
 }
 
@@ -64,6 +68,10 @@ export class SeatMap {
         this.translateView = getViewById('translateView');
         this.contextMenuView = getViewById('contextMenuView');
         this.autoAddView = getViewById('autoAddView');
+        this.modifyRectConf = getViewById('modifyRectConf');
+        this.rectColConSpan = getViewById('rectColConSpan');
+        this.rectRowConSpan = getViewById('rectRowConSpan');
+        this.contextCopy = getViewByTag('contextCopy');
         this.contextDelete = getViewByTag('contextDelete');
         this.seatText = this.seatView.textContent;
     }
@@ -241,6 +249,7 @@ export class SeatMap {
         })
         this.resetZoomView.addEventListener("click", () => {
             this.zoomMap("0")
+            this.resetZoomView.disabled = true
         })
         this.translateView.addEventListener("click", () => {
             this.mapStatus = this.mapStatus != 3 ? 3 : 2;
@@ -252,6 +261,18 @@ export class SeatMap {
             this.autoAddView.disabled = true
             this.mapStatusView.innerHTML = "添加状态"
             this.autoAddRect()
+        })
+        this.modifyRectConf.addEventListener("click", () => {
+            rectConf.col = parseInt(this.rectColConSpan.value)
+            rectConf.row = parseInt(this.rectRowConSpan.value)
+            mapConf.map.width = 6 * 2 + 30 * rectConf.col
+            mapConf.map.height = 6 * 2 + 30 * rectConf.row
+            this.canvas.width = mapConf.map.width
+            this.canvas.height = mapConf.map.height
+            this.canvasInfo = this.canvas.getBoundingClientRect()
+            this.autoAddView.disabled = false
+            this.renderList = []
+            this.painting()
         })
     }
 
@@ -447,6 +468,9 @@ export class SeatMap {
         //
         this.contextDelete.addEventListener("click", () => {
             deleteRects(this.renderList)
+        })
+        this.contextCopy.addEventListener("click", () => {
+            alert("未实现！")
         })
     }
 }
