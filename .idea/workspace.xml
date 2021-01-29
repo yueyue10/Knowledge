@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand />
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="71232411-7d6d-4f82-9744-1fbbf68d504d" name="Default Changelist" comment="增加右击菜单功能">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/design/code/engine.js" beforeDir="false" afterPath="$PROJECT_DIR$/design/code/engine.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="93ab9200-ad88-47dd-8baa-f3195231a21c" />
+  <component name="ProjectId" id="1nPCbLQ7DJSxWQy9glIY1yzbztm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/html/canvas" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Users\Md_Project\Knowledge\html\canvas" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
@@ -12,5 +61,259 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="class.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/markdown/code/js-code/class.js" working-dir="$PROJECT_DIR$/markdown/code/js-code">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.class.js" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task id="LOCAL-00001" summary="增加错误提示功能">
+      <created>1611218374480</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1611218374480</updated>
+    </task>
+    <task id="LOCAL-00002" summary="碰撞冲突优化">
+      <created>1611220769196</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1611220769196</updated>
+    </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="71232411-7d6d-4f82-9744-1fbbf68d504d" name="Default Changelist" comment="图片修改为图床图片" />
+      <created>1611282411421</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1611282411421</updated>
+      <workItem from="1611282412888" duration="5354000" />
+      <workItem from="1611641118044" duration="13136000" />
+      <workItem from="1611709959123" duration="27252000" />
+      <workItem from="1611797529095" duration="27463000" />
+      <workItem from="1611884261826" duration="1529000" />
+    </task>
+    <task id="LOCAL-00003" summary="选座鼠标逻辑修改">
+      <created>1611647043125</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1611647043125</updated>
+    </task>
+    <task id="LOCAL-00004" summary="增加框选逻辑">
+      <created>1611655307516</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1611655307516</updated>
+    </task>
+    <task id="LOCAL-00005" summary="增加绘制边框、缩放、位移功能">
+      <created>1611719608263</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1611719608263</updated>
+    </task>
+    <task id="LOCAL-00006" summary="增加全局配置，设置画布宽高，组件大小等">
+      <created>1611728728433</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1611728728433</updated>
+    </task>
+    <task id="LOCAL-00007" summary="增加键盘监听">
+      <created>1611730486903</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1611730486903</updated>
+    </task>
+    <task id="LOCAL-00008" summary="增加右击菜单功能">
+      <created>1611732196964</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611732196964</updated>
+    </task>
+    <task id="LOCAL-00009" summary="事件监听逻辑优化">
+      <created>1611742249586</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1611742249586</updated>
+    </task>
+    <task id="LOCAL-00010" summary="增加自动填充功能，移动功能修改">
+      <created>1611801925736</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1611801925736</updated>
+    </task>
+    <task id="LOCAL-00011" summary="按键逻辑优化">
+      <created>1611802357978</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1611802357978</updated>
+    </task>
+    <task id="LOCAL-00012" summary="engine代码优化">
+      <created>1611805622288</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1611805622288</updated>
+    </task>
+    <task id="LOCAL-00013" summary=":art:engine代码优化">
+      <created>1611818078377</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1611818078377</updated>
+    </task>
+    <task id="LOCAL-00014" summary="代码优化">
+      <created>1611827963313</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1611827963313</updated>
+    </task>
+    <task id="LOCAL-00015" summary="增加框选区域移动功能">
+      <created>1611829989669</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1611829989669</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="1">
+          <value>
+            <State>
+              <option name="SHOW_ONLY_AFFECTED_CHANGES" value="true" />
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="roots">
+                    <value>
+                      <list>
+                        <option value="$PROJECT_DIR$" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+        <entry key="2">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="3">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="1" value="TOOL_WINDOW" />
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="增加错误提示功能" />
+    <MESSAGE value="碰撞冲突优化" />
+    <MESSAGE value="选座鼠标逻辑修改" />
+    <MESSAGE value="增加框选逻辑" />
+    <MESSAGE value="增加绘制边框、缩放、位移功能" />
+    <MESSAGE value="增加全局配置，设置画布宽高，组件大小等" />
+    <MESSAGE value="增加键盘监听" />
+    <MESSAGE value="增加右击菜单功能" />
+    <MESSAGE value="事件监听逻辑优化" />
+    <MESSAGE value="增加自动填充功能，移动功能修改" />
+    <MESSAGE value="按键逻辑优化" />
+    <MESSAGE value="engine代码优化" />
+    <MESSAGE value=":art:engine代码优化" />
+    <MESSAGE value="代码优化" />
+    <MESSAGE value="增加框选区域移动功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加框选区域移动功能" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="367" y="82" key="CommitChangelistDialog2" timestamp="1611885640182">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="367" y="82" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1611885640182" />
+    <state x="147" y="65" width="1228" height="687" key="DiffContextDialog" timestamp="1611885639955">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="147" y="65" width="1228" height="687" key="DiffContextDialog/0.0.1536.824@0.0.1536.824" timestamp="1611885639955" />
+    <state width="1493" height="203" key="GridCell.Tab.0.bottom" timestamp="1611296727492">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="203" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1611296727492" />
+    <state width="1493" height="203" key="GridCell.Tab.0.center" timestamp="1611296727492">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="203" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1611296727492" />
+    <state width="1493" height="203" key="GridCell.Tab.0.left" timestamp="1611296727491">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="203" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1611296727491" />
+    <state width="1493" height="203" key="GridCell.Tab.0.right" timestamp="1611296727492">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="203" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1611296727492" />
+    <state x="548" y="114" key="RollbackChangesDialog" timestamp="1611735654330">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="548" y="114" key="RollbackChangesDialog/0.0.1536.824@0.0.1536.824" timestamp="1611735654330" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1611884469322">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1611884469322" />
+    <state x="468" y="144" width="600" height="536" key="find.popup" timestamp="1611735466194">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="468" y="144" width="600" height="536" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1611735466194" />
+    <state x="425" y="187" key="run.anything.popup" timestamp="1611825080737">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1611825080737" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1611803185680">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1611803185680" />
   </component>
 </project>

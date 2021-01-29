@@ -108,44 +108,34 @@ export class SeatMap {
         return area
     }
 
-    computeSuitable(rect, leftScroll = 0, topScroll = 0) {
+    computeSuitable(rect, leftOffset = 0, topOffset = 0) {
         this.errorHintView.innerText = ""
-        let rectCache = {
-            left: rect.left + leftScroll,
-            top: rect.top + topScroll,
-            width: rect.width,
-            height: rect.height
-        }
-        console.log(rectCache)
-        let suit = true;
+        //1.目标控件
+        let rectTg = {left: rect.left + leftOffset, top: rect.top + topOffset, width: rect.width, height: rect.height}
+        // console.log(rectTg)
+        let suit = true;//1.1默认是合适，只有一个有冲突就是不合适
         let renderList = this.renderList
         if (rect.rectId) renderList = renderList.filter(ren => {
             return ren.rectId && ren.rectId != rect.rectId
-        })
+        })//2.过滤目标控件(考虑移动情况)
         renderList.forEach((it, idx) => {
             let p1 = {x: it.left, y: it.top}
             let p2 = {x: it.left + it.width, y: it.top + it.height}
-            let p3 = {x: rectCache.left, y: rectCache.top}
-            let p4 = {x: rectCache.left + rectCache.width, y: rectCache.top + rectCache.height}
-            // debugger
+            let p3 = {x: rectTg.left, y: rectTg.top}
+            let p4 = {x: rectTg.left + rectTg.width, y: rectTg.top + rectTg.height}
             let s1 = p2.y < p3.y - rectConf.divide
             let s2 = p1.y > p4.y + rectConf.divide
             let s3 = p2.x < p3.x - rectConf.divide
             let s4 = p1.x > p4.x + rectConf.divide
             let ySuit = (s1 || s2 || s3 || s4)
             // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
-            if (!ySuit) {
-                suit = false
-                // console.log("computeSuitable", `${idx}条冲突`)
-                this.errorHintView.innerText = `和${idx + 1}条冲突`
-            }
-        })
+            if (!ySuit) suit = false, this.errorHintView.innerText = `和${idx + 1}条冲突`
+        })//3.遍历画布中的组件数组和目标控件是否冲突
         let leftSize = mapConf.map.padding + 3;
-        let rightSize = mapConf.map.padding + 3 + rectCache.width;
-        if (rectCache.left < leftSize || rectCache.left > this.canvasInfo.width - rightSize || rectCache.top < leftSize || rectCache.top > this.canvasInfo.height - rightSize) {
-            suit = false
-            this.errorHintView.innerText = "超出边界！"
-        }
+        let rightSize = mapConf.map.padding + 3 + rectTg.width;
+        if (rectTg.left < leftSize || rectTg.left > this.canvasInfo.width - rightSize || rectTg.top < leftSize || rectTg.top > this.canvasInfo.height - rightSize) {
+            suit = false, this.errorHintView.innerText = "超出边界！"
+        }//4.判断目标控件和边界是否冲突
         return suit
     }
 
@@ -283,9 +273,9 @@ export class SeatMap {
                 } else if (clickEp == 1) {
                     area = this.selectArea(area, {x1: startX, y1: startY, x2: currentX, y2: currentY})
                 } else if (clickEp == 3 && area != null) {
-                    area.moveXY({left: currentX - startX, top: currentY - startY})
+                    // todo 判断合理性
+                    moveAreaRect({left: currentX - startX, top: currentY - startY})
                     startX = currentX, startY = currentY
-                    this.painting()
                 }
             if (this.mapStatus == 3 && transDn == 1) {//只有拖动的时候才移动
                 this.translateMap(currentX - startX, currentY - startY)
@@ -341,6 +331,17 @@ export class SeatMap {
                     if (area) deleteRects(this.renderList)
                     break;
             }
+        }
+
+        function moveAreaRect({left = 0, top = 0}) {
+            area.moveXY({left, top})
+            let filRenderList = that.renderList.filter(ren => {
+                return ren.selected;
+            })
+            filRenderList.forEach(ren => {
+                ren.adjust(left, top)
+            })
+            that.painting()
         }
 
         function updateSelRect({x = 0, y = 0}, sel = true) {
