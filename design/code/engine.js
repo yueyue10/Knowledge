@@ -70,7 +70,7 @@ export class SeatMap {
 
     addRect(rectConfig) {
         let target = new Rect(this.ctx, rectConfig, this.seatText)
-        if (this.computeSuitable(target))
+        if (this.computeSuitable({target}))
             this.renderList.push(target)
         return this
     }
@@ -78,7 +78,7 @@ export class SeatMap {
     addRectInner(x, y) {
         let width = rectConf.width
         let target = new Rect(this.ctx, {left: x, top: y, width: width, height: width}, this.seatText)
-        let suit = this.computeSuitable(target)
+        let suit = this.computeSuitable({target})
         if (suit) this.renderList.push(target)
         this.painting()
         return suit
@@ -108,17 +108,49 @@ export class SeatMap {
         return area
     }
 
-    computeSuitable(rect, leftOffset = 0, topOffset = 0) {
+    /**
+     * 判断合理性
+     * @param target 要添加的控件
+     * @param leftOff 向左偏移量
+     * @param topOff 向有偏移量
+     */
+    computeSuitable({target = null, leftOff = 0, topOff = 0}) {
         this.errorHintView.innerText = ""
-        //1.目标控件
-        let rectTg = {left: rect.left + leftOffset, top: rect.top + topOffset, width: rect.width, height: rect.height}
-        // console.log(rectTg)
-        let suit = true;//1.1默认是合适，只有一个有冲突就是不合适
-        let renderList = this.renderList
-        if (rect.rectId) renderList = renderList.filter(ren => {
-            return ren.rectId && ren.rectId != rect.rectId
-        })//2.过滤目标控件(考虑移动情况)
-        renderList.forEach((it, idx) => {
+        //1.tgRects:要操作的组件数组
+        //1.rectTg:操作组件组成的目标控件块
+        //1.suit:默认是合适，只有一个有冲突就是不合适
+        //1.filRenders:画布中没有被选中的组件数组
+        let rectTg, suit = true, filRenders,
+            tgRects = this.renderList.filter(ren => {
+                return ren.selected
+            })
+        console.log("tgRects", tgRects)
+        if (target) {//添加元素
+            rectTg = {left: target.left + leftOff, top: target.top + topOff, width: target.width, height: target.height}
+        } else if (tgRects.length == 1) {//移动单个元素
+            target = tgRects[0]
+            rectTg = {left: target.left + leftOff, top: target.top + topOff, width: target.width, height: target.height}
+        } else {//移动多个元素
+            let xArr = [], yArr = [], xMax, xMin, yMax, yMin
+            tgRects.forEach(ren => {
+                xArr.push(ren.left)
+                yArr.push(ren.top)
+            })
+            xMax = Math.max(...xArr), xMin = Math.min(...xArr), yMax = Math.max(...yArr), yMin = Math.min(...yArr)
+            console.log("max-min", xMax, xMin, yMax, yMin)
+            rectTg = {
+                left: xMin + leftOff,
+                top: yMin + topOff,
+                width: xMax - xMin + rectConf.width,
+                height: yMax - yMin + rectConf.width
+            }
+        }
+        //2.过滤目标控件(考虑移动情况)
+        filRenders = this.renderList.filter(ren => {
+            return ren.rectId && !ren.selected
+        })
+        //3.遍历画布中的组件数组和目标控件是否冲突
+        filRenders.forEach((it, idx) => {
             let p1 = {x: it.left, y: it.top}
             let p2 = {x: it.left + it.width, y: it.top + it.height}
             let p3 = {x: rectTg.left, y: rectTg.top}
@@ -129,18 +161,21 @@ export class SeatMap {
             let s4 = p1.x > p4.x + rectConf.divide
             let ySuit = (s1 || s2 || s3 || s4)
             // console.log("computeSuitable", idx, ySuit, p1, p2, p3, p4, s1, s2, s3, s4)
-            if (!ySuit) suit = false, this.errorHintView.innerText = `和${idx + 1}条冲突`
-        })//3.遍历画布中的组件数组和目标控件是否冲突
+            if (!ySuit) suit = false, this.errorHintView.innerText = `和${it.rectId}冲突`
+        })
         let leftSize = mapConf.map.padding + 3;
         let rightSize = mapConf.map.padding + 3 + rectTg.width;
-        if (rectTg.left < leftSize || rectTg.left > this.canvasInfo.width - rightSize || rectTg.top < leftSize || rectTg.top > this.canvasInfo.height - rightSize) {
+        let mapWidth = this.canvasInfo.width
+        let mapHeight = this.canvasInfo.height
+        //4.判断目标控件和边界是否冲突 todo 这里还待优化
+        if (rectTg.left < leftSize || rectTg.left > mapWidth - rightSize || rectTg.top < leftSize || rectTg.top > mapHeight - rightSize) {
             suit = false, this.errorHintView.innerText = "超出边界！"
-        }//4.判断目标控件和边界是否冲突
+        }
         return suit
     }
 
     drawBorder() {
-        console.log("drawBorder", this.zoomValue)
+        // console.log("drawBorder", this.zoomValue)
         let padding = mapConf.map.padding
         this.ctx.strokeRect(padding, padding, (this.canvasInfo.width - 2 * padding - 2) * this.scaleValue, (this.canvasInfo.height - 2 * padding - 2) * this.scaleValue)
         let margin = mapConf.map.padding + 2
@@ -190,7 +225,7 @@ export class SeatMap {
     }
 
     painting() {
-        console.log("数据长度：", this.renderList.length)
+        // console.log("数据长度：", this.renderList.length)
         this.ctx.clearRect(0, 0, this.canvasInfo.width, this.canvasInfo.height)
         this.drawBorder()
         this.renderList.forEach((it, index) => it.painting(index + 1))
@@ -266,16 +301,17 @@ export class SeatMap {
                 return
             if (this.mapStatus == 2)
                 if (target != null) {
-                    if (this.computeSuitable(target, currentX - startX, currentY - startY)) {
+                    if (this.computeSuitable({leftOff: currentX - startX, topOff: currentY - startY})) {
                         updateSelRect({x: currentX - startX, y: currentY - startY})
                         startX = currentX, startY = currentY
                     }
                 } else if (clickEp == 1) {
                     area = this.selectArea(area, {x1: startX, y1: startY, x2: currentX, y2: currentY})
                 } else if (clickEp == 3 && area != null) {
-                    // todo 判断合理性
-                    moveAreaRect({left: currentX - startX, top: currentY - startY})
-                    startX = currentX, startY = currentY
+                    if (this.computeSuitable({leftOff: currentX - startX, topOff: currentY - startY})) {
+                        updateAreaRect({left: currentX - startX, top: currentY - startY})
+                        startX = currentX, startY = currentY
+                    }
                 }
             if (this.mapStatus == 3 && transDn == 1) {//只有拖动的时候才移动
                 this.translateMap(currentX - startX, currentY - startY)
@@ -307,24 +343,30 @@ export class SeatMap {
             console.log(['keydown', ev.keyCode]);
             switch (ev.keyCode) {
                 case 13://enter
-                    updateSelRect({}, false)
+                    if (target) updateSelRect({}, false)
+                    if (area) updateAreaRect({}, true)
                     break;
                 case 17://ctrl
                     break;
                 case 27://esc
-                    updateSelRect({}, false)
+                    if (target) updateSelRect({}, false)
+                    if (area) updateAreaRect({}, true)
                     break
                 case 37://left
-                    if (target && this.computeSuitable(target, -2, 0)) updateSelRect({x: -2, y: 0})
+                    if (target && this.computeSuitable({target, leftOff: -2, topOff: 0})) updateSelRect({x: -2, y: 0})
+                    if (area && this.computeSuitable({leftOff: -2, topOff: 0})) updateAreaRect({left: -2, top: 0})
                     break;
                 case 38://up
-                    if (target && this.computeSuitable(target, 0, -2)) updateSelRect({x: 0, y: -2})
+                    if (target && this.computeSuitable({target, leftOff: 0, topOff: -2})) updateSelRect({x: 0, y: -2})
+                    if (area && this.computeSuitable({leftOff: 0, topOff: -2})) updateAreaRect({left: 0, top: -2})
                     break;
                 case 39://right
-                    if (target && this.computeSuitable(target, 2, 0)) updateSelRect({x: 2, y: 0})
+                    if (target && this.computeSuitable({target, leftOff: 2, topOff: 0})) updateSelRect({x: 2, y: 0})
+                    if (area && this.computeSuitable({leftOff: 2, topOff: 0})) updateAreaRect({left: 2, top: 0})
                     break;
                 case 40://down
-                    if (target && this.computeSuitable(target, 0, 2)) updateSelRect({x: 0, y: 2})
+                    if (target && this.computeSuitable({target, leftOff: 0, topOff: 2})) updateSelRect({x: 0, y: 2})
+                    if (area && this.computeSuitable({leftOff: 0, topOff: 2})) updateAreaRect({left: 0, top: 2})
                     break;
                 case 46://delete
                     if (target) deleteRects(this.renderList)
@@ -333,7 +375,7 @@ export class SeatMap {
             }
         }
 
-        function moveAreaRect({left = 0, top = 0}) {
+        function updateAreaRect({left = 0, top = 0}, del = false) {
             area.moveXY({left, top})
             let filRenderList = that.renderList.filter(ren => {
                 return ren.selected;
@@ -342,13 +384,13 @@ export class SeatMap {
                 ren.adjust(left, top)
             })
             that.painting()
+            if (del) deleteArea(that.renderList)
         }
 
         function updateSelRect({x = 0, y = 0}, sel = true) {
-            target.adjust(x, y)
-            target.setSelected(sel)
-            that.painting()
+            if (target) target.adjust(x, y), target.setSelected(sel)
             if (!sel) target = null, that.errorHintView.innerText = ""
+            that.painting()
         }
 
         function deleteArea(renderList) {
