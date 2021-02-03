@@ -36,7 +36,7 @@
         <canvas id="seat_canvas" width="300px" height="300px" style="border: #cccccc solid 1px">
             浏览器不支持
         </canvas>
-        <span id="error_hint"></span>
+        <span id="error_hint" style="height: 20px;"></span>
         <div class="hor-layout-center">
             <button id="auto_add_btn">1.自动填充</button>
             <button id="reset_zoom_btn" disabled="true">2.恢复缩放前状态</button>
@@ -56,6 +56,7 @@
 <!--隐藏标签-->
 <ul id='context-menu'>
     <li id="copy">复制</li>
+    <li id="paste" style="display: none">粘贴</li>
     <li id="delete">删除</li>
 </ul>
 </body>

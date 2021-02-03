@@ -24,6 +24,7 @@ let mapConf = {
         autoAddView: "auto_add_btn",
         contextCopy: "#context-menu>#copy",
         contextDelete: "#context-menu>#delete",
+        contextPaste: "#context-menu>#paste",
         modifyRectConf: "modify_rect_conf",
         rectColConSpan: "rect-col-span",
         rectRowConSpan: "rect-row-span",
@@ -45,6 +46,7 @@ export class SeatMap {
         this.zoomValue = 1;
         this.scaleValue = 1
         this.renderList = []
+        this.contextPos = null
         this.initCanvasView()
         this.initDisplayView()
         this.addSpanEvent()
@@ -72,6 +74,7 @@ export class SeatMap {
         this.rectColConSpan = getViewById('rectColConSpan');
         this.rectRowConSpan = getViewById('rectRowConSpan');
         this.contextCopy = getViewByTag('contextCopy');
+        this.contextPaste = getViewByTag('contextPaste');
         this.contextDelete = getViewByTag('contextDelete');
         this.seatText = this.seatView.textContent;
     }
@@ -92,6 +95,7 @@ export class SeatMap {
         return suit
     }
 
+    //框选逻辑：1.判断框是否为空：为空创建框；不为空就修改框。2.对renderList遍历，判断组件在框内就设置选中，并设置相对框的坐标。
     selectArea(area, areaCon) {
         if (area == null) area = new SelectArea(this.ctx, areaCon), this.renderList.push(area)
         else area.adjust(areaCon.x2, areaCon.y2)
@@ -99,6 +103,7 @@ export class SeatMap {
             return ren.constructor.name != "SelectArea"
         })
         rectList.forEach(rect => {
+            //p1,p2:框的左上角和右下角。p3,p4:rect组件的左上角和右下角。
             let p1, p2, p3 = {x: rect.left, y: rect.top}, p4 = {x: rect.left + rect.width, y: rect.top + rect.height}
             if (area.x1 < area.x2 && area.y1 < area.y2)//向右下角划动
                 p1 = {x: area.x1, y: area.y1}, p2 = {x: area.x2, y: area.y2}
@@ -108,9 +113,11 @@ export class SeatMap {
                 p1 = {x: area.x2, y: area.y2}, p2 = {x: area.x1, y: area.y1}
             if (area.x1 > area.x2 && area.y1 < area.y2)//向左下角划动
                 p1 = {x: area.x2, y: area.y1}, p2 = {x: area.x1, y: area.y2}
-            if (p3.x > p1.x && p3.y > p1.y && p4.x < p2.x && p4.y < p2.y)
-                rect.setSelected(true)
-            else rect.setSelected(false)
+            let areaObj = p1 && p2 //刚开始时p1,p2不存在，下面会报错
+            if (areaObj && p3.x > p1.x && p3.y > p1.y && p4.x < p2.x && p4.y < p2.y)//rect组件的p3和p4点都在p1和p2组成的矩形内
+                rect.setSelected(true), rect.setAreaSp(p1)
+            else
+                rect.setSelected(false)
         })
         this.painting()
         return area
@@ -239,13 +246,17 @@ export class SeatMap {
         this.renderList.forEach((it, index) => it.painting(index + 1))
     }
 
+    updateMapStatus(status) {
+        this.mapStatus = status
+        this.seatView.style.color = this.mapStatus == 1 ? "red" : "#838388";
+        this.mapStatusView.style.color = this.mapStatus == 1 ? "red" : "blue";
+        this.mapStatusView.innerHTML = this.mapStatus == 1 ? "添加状态" : "编辑状态";
+        if (this.mapStatus == 2) this.errorHintView.innerText = ""
+    }
+
     addSpanEvent() {
         this.seatView.addEventListener("click", () => {
-            this.mapStatus = this.mapStatus == 1 ? 2 : 1;
-            this.seatView.style.color = this.mapStatus == 1 ? "red" : "#838388";
-            this.mapStatusView.style.color = this.mapStatus == 1 ? "red" : "blue";
-            this.mapStatusView.innerHTML = this.mapStatus == 1 ? "添加状态" : "编辑状态";
-            if (this.mapStatus == 2) this.errorHintView.innerText = ""
+            this.updateMapStatus(this.mapStatus == 1 ? 2 : 1)
         })
         this.resetZoomView.addEventListener("click", () => {
             this.zoomMap("0")
@@ -300,7 +311,7 @@ export class SeatMap {
                     if (clickEp == 1) clickEp = 2
                     else if (clickEp == 2) {
                         if (area.isPointIn(startX, startY)) clickEp = 3
-                        else deleteArea(this.renderList)
+                        else deleteArea(this.renderList), resetCopy()
                     } else if (clickEp == 3) {
                         clickEp = 2
                     }
@@ -370,6 +381,7 @@ export class SeatMap {
                 case 17://ctrl
                     break;
                 case 27://esc
+                    that.updateMapStatus(2)
                     if (target) updateSelRect({}, false)
                     if (area) updateAreaRect({}, true)
                     break
@@ -418,8 +430,9 @@ export class SeatMap {
             let filRenderList = renderList.filter(ren => {
                 return ren.constructor.name != "SelectArea"
             })
+            console.log("deleteArea----", filRenderList)
             filRenderList.forEach(ren => {
-                ren.setSelected(false)
+                if ("setSelected" in ren) ren.setSelected(false)
             })
             that.renderList = filRenderList
             area = null
@@ -446,6 +459,30 @@ export class SeatMap {
             that.painting()
         }
 
+        function resetCopy() {
+            that.contextCopy.style.display = "block"
+            that.contextPaste.style.display = "none"
+        }
+
+        function copyList(list) {
+            let newList = []
+            let objList = JSON.parse(JSON.stringify(list))
+            objList.forEach(item => {
+                let bean = item.name === "Rect" ? new Rect(that.ctx, {}, '') : new SelectArea(that.ctx, {})
+                delete item.ctx
+                // console.log("objList.forEach", item)
+                newList.push(copyBean(item, bean))
+            })
+            console.log("copyList", objList)
+            return newList
+        }
+
+        function copyBean(obj, bean) {
+            for (let p in obj)
+                bean[p] = obj[p]
+            return bean;
+        }
+
         //统一添加事件
         this.canvas.addEventListener('mousedown', mouseDown)
         this.canvas.addEventListener('mousemove', mouseMove)
@@ -454,6 +491,8 @@ export class SeatMap {
         document.onkeydown = keyInput;//键盘输入事件
         //右键菜单逻辑
         this.canvas.oncontextmenu = (event) => {
+            console.log("oncontextmenu", event)
+            this.contextPos = {x: event.offsetX, y: event.offsetY}
             event.preventDefault();
             if (target || area) {
                 this.contextMenuView.style.display = 'block';
@@ -470,7 +509,28 @@ export class SeatMap {
             deleteRects(this.renderList)
         })
         this.contextCopy.addEventListener("click", () => {
-            alert("未实现！")
+            this.contextCopy.style.display = "none"
+            this.contextPaste.style.display = "block"
+        })
+        this.contextPaste.addEventListener("click", () => {
+            // debugger
+            // let rectList = this.renderList
+            let rectList = copyList(this.renderList) // todo 数据深拷贝没实现，会修改源数据
+            console.log("contextPaste0--------", rectList)
+            let selRects = rectList.filter(ren => {
+                return ren.constructor.name != "SelectArea" && ren.selected
+            })
+            selRects.forEach(rect => {
+                // debugger
+                rect.left = rect.toax + this.contextPos.x
+                rect.top = rect.toay + this.contextPos.y
+            })
+            console.log("contextPaste1--------", selRects)
+            this.renderList = rectList.concat(selRects)
+            console.log("contextPaste2--------", this.renderList)
+            resetCopy()
+            // updateSelRect({}, false)
+            deleteArea(this.renderList)
         })
     }
 }

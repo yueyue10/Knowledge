@@ -16,6 +16,9 @@ export class Rect {
         this.background = background
         this.rectId = 0 //唯一标识
         this.selected = false//是否被选中
+        this.toax = 0//相对框的x坐标
+        this.toay = 0//相对框的y坐标
+        this.name = "Rect"
     }
 
     adjust(left, top) {
@@ -26,6 +29,15 @@ export class Rect {
     setSelected(sel) {
         this.selected = sel
         this.background = sel ? "red" : "#f4a41e"
+    }
+
+    /**
+     * 设置相对框的起点位置
+     * @param pos 框的起点位置
+     */
+    setAreaSp(pos) {
+        this.toax = this.left - pos.x
+        this.toay = this.top - pos.y
     }
 
     isPointIn(x, y) {
@@ -77,6 +89,7 @@ export class SelectArea {
         this.x2 = x2
         this.y2 = y2
         this.background = background
+        this.name = "SelectArea"
     }
 
     adjust(x2, y2) {
