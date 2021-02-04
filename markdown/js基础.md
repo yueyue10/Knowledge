@@ -87,8 +87,12 @@ class Logger {
     ```
 ### 四、module使用[参考][module-参考]
 
+### 五、callback接口回调使用[callback][callback]
+
+
 [class]:code/js-code/class.js
 [function]:code/js-code/function.js
+[callback]:code/js-code/callback.html
 [async-参考]:http://jsrun.net/t/MZKKp
 [class-参考]:http://jsrun.net/t/SZKKp
 [module-参考]:http://jsrun.net/t/KgKKp

@@ -6,7 +6,7 @@
 
 [**uniCloud数据库聚合操作文档**][unicloud_aggregate]
 
-|   目录		|       说明					|
+|   Web目录		|       说明					|
 |------------|------------|
 |   [使用UniCloud总结][使用UniCloud总结]	| 使用UniCloud总结 |
 |   [js方法记录][js方法记录]	|  js方法总结记录		|
@@ -18,9 +18,16 @@
 |   [网络资源收集_学习][网络资源收集_学习]	| 收集的有趣的网络资源 |
 |   [md生成带侧边栏的目录][md生成带侧边栏的目录]	| md生成带侧边栏的目录方法 |
 
+|   Python目录		|       说明					|
+|------------|------------|
+|   [PyWebIO使用][PyWebIO使用]	| 使用`pyinstaller`将Python打包`Exe应用`,并使用`PyWebIO`将浏览器作为程序的界面载体 |
+
+
+
 [js方法记录]:js方法.md
 [vue知识记录]:vue知识.md
 [微信公众号]:微信公众号.md
+[PyWebIO使用]:Python/pywebio.md
 [项目中的知识记录]:项目中的知识记录.md
 [网络资源收集_学习]:网络资源收集_学习.md
 [使用UniCloud总结]:使用UniCloud总结.md
