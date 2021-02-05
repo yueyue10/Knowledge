@@ -19,6 +19,7 @@
    * 在浏览器：将图片识别结果直观的展示出来
 
 _最终的效果是这样的：_
+![pywebio_html0.png](../image/pywebio_html0.png)
 ![pywebio_html1.png](../image/pywebio_html1.png)
 ![pywebio_html2.png](../image/pywebio_html2.png)
 

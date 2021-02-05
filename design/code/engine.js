@@ -531,6 +531,7 @@ export class SeatMap {
             resetCopy()
             // updateSelRect({}, false)
             deleteArea(this.renderList)
+            this.errorHintView.innerText="因为【JS数据深拷贝】没实现，会修改源数据。所以此功能实现有问题：1.源数据会丢失，2.重叠问题没心思实现，3.ctrl+c和ctrl+v也没心思实现。"
         })
     }
 }
