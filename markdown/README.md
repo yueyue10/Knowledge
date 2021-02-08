@@ -21,6 +21,7 @@
 |   Python目录		|       说明					|
 |------------|------------|
 |   [PyWebIO使用][PyWebIO使用]	| 使用`pyinstaller`将Python打包`Exe应用`,并使用`PyWebIO`将浏览器作为程序的界面载体 |
+|   [Python-Opencv][Python-Opencv使用]	| Python-Opencv实现人脸识别功能 |
 
 
 
@@ -28,6 +29,7 @@
 [vue知识记录]:vue知识.md
 [微信公众号]:微信公众号.md
 [PyWebIO使用]:Python/pywebio.md
+[Python-Opencv使用]:Python/opencv.md
 [项目中的知识记录]:项目中的知识记录.md
 [网络资源收集_学习]:网络资源收集_学习.md
 [使用UniCloud总结]:使用UniCloud总结.md
