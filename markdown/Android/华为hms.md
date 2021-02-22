@@ -97,11 +97,19 @@
 
 3. 在Android项目中添加相应推送代码（可以使用`HMS ToolKit` > `Coding Assistant` > `拖拽代码到项目` 方式添加 ）
 
-   <img src="../image/android/huawei_push_toolkit1.png" alt="huawei_push_toolkit1.png" style="zoom:50%;" />
+   <center>
+       <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnw33041rnj20fy0od3zq.jpg" alt="huawei_push_toolkit1.png" width="40%" />
+   </center>
+
 
    > 第一步：找到 `Coding Assistant` > `App Services` > `Push Kit`
 
-   <img src="../image/android/huawei_push_toolkit2.png" style="zoom: 33%;" />
+   <center>
+       <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnw33cj9g9j21co0oeadk.jpg" width="60%" />
+   </center>
+
+   
+
 
    > 第二步：在 `Push Kit` > ` Scenarios List(情景列表)` > `Send nofification message...(发送通知消息)` > `将该项拖到编辑器中`
 
@@ -109,9 +117,14 @@
 
 5. 在[华为开发者网站][huawei-agc-pc]发送推送进行测试，填入刚才获取到的token。正常在手机上就可以收到推送通知。
 
-<img src="../image/android/huawei_push_web.png" alt="huawei_push_web.png" style="zoom: 33%;" />
+<center>
+    <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnw33l0mzwj21gu0p0wgt.jpg" alt="huawei_push_web.png" width="60%" />
+</center>
 
-<img src="../image/android/huawei_push_result.png" alt="huawei_push_result.png" style="zoom: 50%;" />
+<center>
+    <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnw33unetnj20hq0qbn3f.jpg" alt="huawei_push_result.png" width="40%" />
+</center>
+
 
 > 推送通知效果
 
@@ -135,11 +148,12 @@
 
 * `卡券包`方式添加：`需要服务端JWE示例代码先【生成卡券模板】` > `通过服务端代码生成JWE网址链接添加卡券到钱包`或者 `通过客户端SDK添加JWE卡券到钱包`
 * `PassObject`卡券包方式添加：`需要服务端PassSDK示例代码先生成卡券包` > `通过客户端SDK添加PassObject卡券到钱包`
-* 在 `华为钱包` 激活卡券`NFC功能`：`需要使用服务端NFC刷卡示例代码部署服务到自己的服务器` > `需要上面【生成卡券模板】的时候就标识NFC功能及自己服务器NFC服务地址`（*`？？以上操作我都完成了，最后激活的时候还是失败，没有错误信息。工单沟通很费劲，最后提供了一个微信号：【m6613momo】。我没有精力再去尝试了，感兴趣的可以去联系寻求帮助。？？`*）<img src="../image/android/huawei_walletkit_wechat.png" alt="huawei_walletkit_wechat.png" style="zoom:40%;" />
+* 在 `华为钱包` 激活卡券`NFC功能`：`需要使用服务端NFC刷卡示例代码部署服务到自己的服务器` > `需要上面【生成卡券模板】的时候就标识NFC功能及自己服务器NFC服务地址`（*`？？以上操作我都完成了，最后激活的时候还是失败，没有错误信息。工单沟通很费劲，最后提供了一个微信号：【m6613momo】。我没有精力再去尝试了，感兴趣的可以去联系寻求帮助。？？`*）<img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnw3ha5cz1j20nf04h0sq.jpg" width="40%" />
 
+<center>
+    <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnw34fqv2uj20od0gtjss.jpg" alt="huawei_walletkit_scene.png" width="50%" />
+</center>
 
-
-<img src="../image/android/huawei_walletkit_scene.png" alt="huawei_walletkit_scene.png" style="zoom: 60%;" />
 
 > 看官方的介绍`Wallet Kit`支持的业务场景还是很强大的，我们公司调研也想实现 `智慧门票` 的效果，但是失败了。
 
@@ -166,7 +180,10 @@
 3. 使用服务端`JWE`示例代码及上面得到的参数生成卡券模板及`JWE`网址链接
 4. 打开`JWE`网址链接添加卡券到华为钱包。（使用`APP`添加`JWE`卡券的特点就是免登陆）
 
-<img src="../image/android/huawei_walletkit_card.jpg" alt="huawei_walletkit_card.png" style="zoom:50%;" />
+<center>
+    <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnw34klv0sj207i0flq4n.jpg" alt="huawei_walletkit_card.png" width="20%" />
+</center>
+
 
 > 最终效果
 
@@ -187,12 +204,12 @@
 5. crop：图片裁剪功能
 
    <div>
-       <div style="display:flex">
-           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu10h77qug20ge0zknpl.gif" style="zoom: 25%;"/>
-           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu13d5tdeg20go0tnhe1.gif" style="zoom:25%;" />
-           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu10vp1a8g20go0tnb2f.gif" style="zoom:25%;" />
-           <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu10rrgspg20go0tnu12.gif" style="zoom:25%;" />
-           <img src="https://www.hualigs.cn/image/6030b67c147f3.jpg" style="zoom:25%;" />
+       <div style="display:flex;flex-direction:row">
+           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu10h77qug20ge0zknpl.gif" width="20%;"/>
+           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu13d5tdeg20go0tnhe1.gif" width="20%;" />
+           <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu10vp1a8g20go0tnb2f.gif" width="20%;" />
+           <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu10rrgspg20go0tnu12.gif" width="20%;" />
+           <img src="https://www.hualigs.cn/image/6030b67c147f3.jpg" width="20%;" />
    	</div>
        <div style="display:flex;position:absolute;top:70%;color:red;font-weight:bold;width:100%">
            <text style="width:15%;text-align:center">图片滤镜</text>
@@ -222,10 +239,10 @@
 
 <div>
     <div style="display:flex">
-        <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu2awc7txj209u0lc3z1.jpg" style="zoom:60%;"/>
-        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2b12vt0j209u0lc74x.jpg" style="zoom:60%;" />
-        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2bjhoifj209u0lct9c.jpg" style="zoom:60%;" />
-        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2bnd32wj20u01t0wjf.jpg" style="zoom:30%;" />
+        <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu2awc7txj209u0lc3z1.jpg" width="23%"/>
+        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2b12vt0j209u0lc74x.jpg" width="23%"/>
+        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2bjhoifj209u0lct9c.jpg" width="23%" />
+        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2bnd32wj20u01t0wjf.jpg" width="20%" />
 	</div>
     <div style="display:flex;position:absolute;top:70%;color:red;font-weight:bold;width:100%">
         <text style="width:23%;text-align:center">module-body</text>
@@ -235,15 +252,16 @@
     </div>
 </div>
 
+
 > module-body模块功能
 >
 > <div>
 >     <div style="display:flex">
->         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2lvuo4cj20u01t07wh.jpg" style="zoom:25%;"/>
->         <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2m0it8jj20u01t07wh.jpg" style="zoom:25%;" />
->         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2mucte6j20u01t0kdm.jpg" style="zoom:25%;" />
->         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2u91uyfj20u01t07wj.jpg" style="zoom:25%;" />
->         <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu2vg35bmj20u01qc140.jpg" style="zoom:26%">
+>         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2lvuo4cj20u01t07wh.jpg" width="20%"/>
+>         <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu2m0it8jj20u01t07wh.jpg" width="20%"/>
+>         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2mucte6j20u01t0kdm.jpg" width="20%"/>
+>         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu2u91uyfj20u01t07wj.jpg" width="20%"/>
+>         <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu2vg35bmj20u01qc140.jpg" width="20%"/>
 > 	</div>
 >     <div style="display:flex;position:absolute;top:70%;color:red;font-weight:bold;width:100%">
 >         <text style="width:20%;text-align:center">人脸检测</text>
@@ -258,11 +276,11 @@
 >
 > <div>
 >     <div style="display:flex">
->         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu32q9kw3j20u01t0jxh.jpg" style="zoom:25%;"/>
->         <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu32u6ro3j209u0lcgm7.jpg" style="zoom:50%;" />
->         <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu3408oybj20u01t0n1h.jpg" style="zoom:25%;" />
->         <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu344ihz3j20u01t00wx.jpg" style="zoom:25%;" />
->         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu352p7o0j20u01t0aq2.jpg" style="zoom:25%">
+>         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu32q9kw3j20u01t0jxh.jpg" width="20%"/>
+>         <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu32u6ro3j209u0lcgm7.jpg" width="20%" />
+>         <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu3408oybj20u01t0n1h.jpg" width="20%" />
+>         <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu344ihz3j20u01t00wx.jpg" width="20%" />
+>         <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu352p7o0j20u01t0aq2.jpg" width="20%">
 > 	</div>
 >     <div style="display:flex;position:absolute;top:70%;color:red;font-weight:bold;width:100%">
 >         <text style="width:20%;text-align:center">实时语音识别</text>
@@ -277,12 +295,12 @@
 
 <div>
     <div style="display:flex">
-        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu3fhz9s3g202s05ox6r.gif" style="zoom:120%;"/>
-        <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu3fkql98g2032069e84.gif" style="zoom:120%;" />
-        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu3gcfr51g20500a8qv8.gif" style="zoom:60%;" />
-        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu3gr6oc2g203c06tqv8.gif" style="zoom:100%;" />
-        <img src=" https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu3h4p2hig20a00lqarm.gif" style="zoom:30%;" />
-        <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu3hrkerrg20a00lqar7.gif" style="zoom:30%;" />
+        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu3fhz9s3g202s05ox6r.gif" width="20%"/>
+        <img src="https://wx4.sinaimg.cn/mw690/a47eb219ly1gnu3fkql98g2032069e84.gif" width="20%" />
+        <img src="https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu3gcfr51g20500a8qv8.gif" width="20%" />
+        <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnu3gr6oc2g203c06tqv8.gif" width="20%" />
+        <img src=" https://wx1.sinaimg.cn/mw690/a47eb219ly1gnu3h4p2hig20a00lqarm.gif" width="15%" />
+        <img src="https://wx3.sinaimg.cn/mw690/a47eb219ly1gnu3hrkerrg20a00lqar7.gif" width="15%" />
 	</div>
     <div style="display:flex;position:absolute;top:70%;color:red;font-weight:bold;width:100%">
         <text style="width:14%;text-align:center">CrazyRockets</text>
@@ -294,6 +312,7 @@
     </div>
 </div>
 
+
 ## 六、HMS ToolKit使用
 
 **[HMS-Toolkit安装使用][HMS-Toolkit]**
@@ -304,13 +323,18 @@
 
 > Cloud Debugging功能每次使用的单设备使用时长为2小时，到期前，您可以先释放设备资源，然后再重新申请该设备即可。第一次使用时，HMS Toolkit会为用户分配24小时的Cloud Debugging时长，到期后系统会自动提醒用户是否续申请，一次可以续申请8小时。请开发者合理高效的利用设备资源，及时释放空闲的设备。
 
-<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20210205171411.81995111497424566942711514131611:50520205094757:2800:73777897088B63293A90CDE93F2F07F70577A8D264FDE1D6B504C2F91C223C54.png?needInitFileName=true?needInitFileName=true" style="zoom: 67%;" />
+<center>
+    <img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20210205171411.81995111497424566942711514131611:50520205094757:2800:73777897088B63293A90CDE93F2F07F70577A8D264FDE1D6B504C2F91C223C54.png?needInitFileName=true?needInitFileName=true" width="30%" />
+</center>
+
 
 ## 七、其他开放能力使用
 
-**[桌面角标](https://developer.huawei.com/consumer/cn/hms/desk-top-corner)**<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20190910000738.22823443885980635615590542403565:50500908160738:2800:05B896FBA83DF9BD5DC68452D4AFAA8691C1632B2C71F3474EB82F12BFDF71D0.png" style="zoom:50%;" />
+**[桌面角标](https://developer.huawei.com/consumer/cn/hms/desk-top-corner)**<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20190910000738.22823443885980635615590542403565:50500908160738:2800:05B896FBA83DF9BD5DC68452D4AFAA8691C1632B2C71F3474EB82F12BFDF71D0.png" width="13%" />
 
-<img src="../image/android/huawei_launcher_num.png" alt="huawei_launcher_num.png" style="zoom: 67%;" />
+<center>
+    <img src="https://wx2.sinaimg.cn/mw690/a47eb219ly1gnw35qk5x3j20bq0dcwjg.jpg" alt="huawei_launcher_num.png" width="33%" />
+</center>
 
 
 
