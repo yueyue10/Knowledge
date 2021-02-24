@@ -1,4 +1,4 @@
-import {Rect, SelectArea} from "./utils.js"
+import {Rect, SelectArea, copyList} from "./utils.js"
 //座椅配置
 let rectConf = {
     col: 25,
@@ -43,9 +43,10 @@ export class SeatMap {
 
     constructor() {
         this.mapStatus = 2;//1:新增 2:编辑 3:平移
+        this.copying = false;//复制中...
         this.zoomValue = 1;
         this.scaleValue = 1
-        this.renderList = []
+        this.renderList = [] //todo 将选择框和组件分离
         this.contextPos = null
         this.initCanvasView()
         this.initDisplayView()
@@ -129,7 +130,7 @@ export class SeatMap {
      * @param leftOff 向左偏移量
      * @param topOff 向有偏移量
      */
-    computeSuitable({target = null, leftOff = 0, topOff = 0}) {
+    computeSuitable({target = null, leftOff = 0, topOff = 0, copySs = false}) {
         this.errorHintView.innerText = ""
         //1.tgRects:要操作的组件数组
         //1.rectTg:操作组件组成的目标控件块
@@ -162,7 +163,8 @@ export class SeatMap {
         }
         //2.过滤目标控件(考虑移动情况)
         filRenders = this.renderList.filter(ren => {
-            return ren.rectId && !ren.selected
+            if (copySs) return ren.rectId //如果是复制状态下：筛选所有画布上的组件元素
+            else return ren.rectId && !ren.selected //如果是普通状态下：筛选没有选中的所有组件元素
         })
         //3.遍历画布中的组件数组和目标控件是否冲突
         filRenders.forEach((it, idx) => {
@@ -215,6 +217,12 @@ export class SeatMap {
         }
     }
 
+    drawCopyText() {
+        let area = this.renderList.filter(ren => ren.name == 'SelectArea')
+        if (!area || !this.copying) return
+        this.ctx.fillText("移动鼠标后粘贴", area[0].x1, area[0].y1);
+    }
+
     autoAddRect() {
         this.painting()
         let col = 0, row = 0, rectMargin = mapConf.map.padding + 2 + 5
@@ -243,6 +251,7 @@ export class SeatMap {
         // console.log("数据长度：", this.renderList.length)
         this.ctx.clearRect(0, 0, this.canvasInfo.width, this.canvasInfo.height)
         this.drawBorder()
+        this.drawCopyText()
         this.renderList.forEach((it, index) => it.painting(index + 1))
     }
 
@@ -252,6 +261,51 @@ export class SeatMap {
         this.mapStatusView.style.color = this.mapStatus == 1 ? "red" : "blue";
         this.mapStatusView.innerHTML = this.mapStatus == 1 ? "添加状态" : "编辑状态";
         if (this.mapStatus == 2) this.errorHintView.innerText = ""
+    }
+
+    addContextPos(e, test = false) {
+        this.contextPos = {x: e.offsetX, y: e.offsetY}
+        if (!test) return
+        this.ctx.beginPath()
+        this.ctx.arc(this.contextPos.x, this.contextPos.y, 2, 0, Math.PI * 2, false)
+        this.ctx.closePath()
+        this.ctx.fill()
+    }
+
+    cutWidgets() {
+
+    }
+
+    copyWidgets() {
+        let area = this.renderList.filter(ren => ren.name == 'SelectArea')
+        if (!area || this.mapStatus != 2) return
+        this.copying = true
+        this.painting()
+    }
+
+    pasteWidgets() {
+        // 数据深拷贝已经实现:1.先过滤得到新数组，2.对新数组进行深拷贝，3.对新数组进行修改
+        // todo 之前的数据深拷贝没有实现，因为拷贝的步骤不对导致。原步骤：1.先深拷贝得到新数组，2.对新数组筛选和修改。
+        //  区别在于：是先深拷贝再筛选、修改<—>还是先筛选、修改再深拷贝
+        const selRects = this.renderList.filter(ren => {
+            return ren.constructor.name != "SelectArea" && ren.selected
+        })
+        let newSelRects = copyList(selRects, this.ctx) //数据深拷贝，不执行这一步会对源数据也进行修改。
+        newSelRects.forEach(rect => {
+            rect.left = rect.toax + this.contextPos.x
+            rect.top = rect.toay + this.contextPos.y
+            rect.setSelected(false)
+        })
+        //计算合理性
+        let allSuit = true
+        for (const rect of newSelRects) {
+            let suit = this.computeSuitable({target: rect, copySs: true})
+            if (!suit) allSuit = false
+        }
+        if (allSuit) {
+            this.renderList = this.renderList.concat(newSelRects)
+            this.painting()
+        }
     }
 
     addSpanEvent() {
@@ -329,6 +383,7 @@ export class SeatMap {
         let mouseMove = e => {
             // debugger
             const currentX = e.offsetX, currentY = e.offsetY
+            this.addContextPos(e)
             if (this.mapStatus == 1)
                 return
             if (this.mapStatus == 2)
@@ -405,6 +460,15 @@ export class SeatMap {
                     if (target) deleteRects(this.renderList)
                     if (area) deleteRects(this.renderList)
                     break;
+                case 67://c
+                    if (ev.ctrlKey) this.copyWidgets()
+                    break
+                case 86://v
+                    if (ev.ctrlKey) this.pasteWidgets()
+                    break
+                case 88://x
+                    if (ev.ctrlKey) this.cutWidgets()
+                    break
             }
         }
 
@@ -434,6 +498,7 @@ export class SeatMap {
             filRenderList.forEach(ren => {
                 if ("setSelected" in ren) ren.setSelected(false)
             })
+            that.copying = false
             that.renderList = filRenderList
             area = null
             clickEp = 0
@@ -464,25 +529,6 @@ export class SeatMap {
             that.contextPaste.style.display = "none"
         }
 
-        function copyList(list) {
-            let newList = []
-            let objList = JSON.parse(JSON.stringify(list))
-            objList.forEach(item => {
-                let bean = item.name === "Rect" ? new Rect(that.ctx, {}, '') : new SelectArea(that.ctx, {})
-                delete item.ctx
-                // console.log("objList.forEach", item)
-                newList.push(copyBean(item, bean))
-            })
-            console.log("copyList", objList)
-            return newList
-        }
-
-        function copyBean(obj, bean) {
-            for (let p in obj)
-                bean[p] = obj[p]
-            return bean;
-        }
-
         //统一添加事件
         this.canvas.addEventListener('mousedown', mouseDown)
         this.canvas.addEventListener('mousemove', mouseMove)
@@ -492,9 +538,9 @@ export class SeatMap {
         //右键菜单逻辑
         this.canvas.oncontextmenu = (event) => {
             console.log("oncontextmenu", event)
-            this.contextPos = {x: event.offsetX, y: event.offsetY}
+            this.addContextPos(event)
             event.preventDefault();
-            if (target || area) {
+            if (area) {
                 this.contextMenuView.style.display = 'block';
                 this.contextMenuView.style.left = event.clientX + 'px';
                 this.contextMenuView.style.top = event.clientY + 'px';
@@ -504,34 +550,16 @@ export class SeatMap {
         document.onclick = function (event) {
             that.contextMenuView.style.display = 'none';
         }
-        //
         this.contextDelete.addEventListener("click", () => {
             deleteRects(this.renderList)
         })
         this.contextCopy.addEventListener("click", () => {
+            this.copyWidgets()
             this.contextCopy.style.display = "none"
             this.contextPaste.style.display = "block"
         })
         this.contextPaste.addEventListener("click", () => {
-            // 数据深拷贝已经实现:1.先过滤得到新数组，2.对新数组进行深拷贝，3.对新数组进行修改
-            // todo 之前的数据深拷贝没有实现，因为拷贝的步骤不对导致。原步骤：1.先深拷贝得到新数组，2.对新数组筛选和修改。
-            //  区别在于：是先深拷贝再筛选、修改<—>还是先筛选、修改再深拷贝
-            const selRects = this.renderList.filter(ren => {
-                return ren.constructor.name != "SelectArea" && ren.selected
-            })
-            let newSelRects=copyList(selRects) //数据深拷贝，不执行这一步会对源数据也进行修改。
-            newSelRects.forEach(rect => {
-                rect.left = rect.toax + this.contextPos.x
-                rect.top = rect.toay + this.contextPos.y
-            })
-            console.log("contextPaste1--------", newSelRects)
-            // 将原数组和新数组进行拼接，重新赋值。
-            this.renderList = this.renderList.concat(newSelRects)
-            console.log("contextPaste2--------", this.renderList)
-            resetCopyView()
-            // updateSelRect({}, false)
-            deleteArea(this.renderList)
-            this.errorHintView.innerText = "深拷贝问题修复,还需要实现：2.重叠问题没心思实现，3.ctrl+c和ctrl+v也没心思实现。"
+            this.pasteWidgets()
         })
     }
 }

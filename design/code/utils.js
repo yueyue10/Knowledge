@@ -1,10 +1,11 @@
 class Widget {
     constructor(ctx) {
-        this.ctx=ctx
+        this.ctx = ctx
     }
 }
+
 //座位
-export class Rect extends Widget{
+export class Rect extends Widget {
     constructor(ctx, {
         top = 0,
         left = 0,
@@ -128,3 +129,23 @@ export class SelectArea {
         this.ctx.restore();
     }
 }
+
+function copyBean(obj, bean) {
+    for (let p in obj)
+        bean[p] = obj[p]
+    return bean;
+}
+
+export function copyList(list, ctx) {
+    let newList = []
+    let objList = JSON.parse(JSON.stringify(list))
+    objList.forEach(item => {
+        let bean = item.name === "Rect" ? new Rect(ctx, {}, '') : new SelectArea(ctx, {})
+        delete item.ctx
+        // console.log("objList.forEach", item)
+        newList.push(copyBean(item, bean))
+    })
+    console.log("copyList", objList)
+    return newList
+}
+
