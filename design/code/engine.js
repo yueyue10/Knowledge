@@ -311,7 +311,7 @@ export class SeatMap {
                     if (clickEp == 1) clickEp = 2
                     else if (clickEp == 2) {
                         if (area.isPointIn(startX, startY)) clickEp = 3
-                        else deleteArea(this.renderList), resetCopy()
+                        else deleteArea(this.renderList), resetCopyView()
                     } else if (clickEp == 3) {
                         clickEp = 2
                     }
@@ -459,7 +459,7 @@ export class SeatMap {
             that.painting()
         }
 
-        function resetCopy() {
+        function resetCopyView() {
             that.contextCopy.style.display = "block"
             that.contextPaste.style.display = "none"
         }
@@ -513,25 +513,25 @@ export class SeatMap {
             this.contextPaste.style.display = "block"
         })
         this.contextPaste.addEventListener("click", () => {
-            // debugger
-            // let rectList = this.renderList
-            let rectList = copyList(this.renderList) // todo 数据深拷贝没实现，会修改源数据
-            console.log("contextPaste0--------", rectList)
-            let selRects = rectList.filter(ren => {
+            // 数据深拷贝已经实现:1.先过滤得到新数组，2.对新数组进行深拷贝，3.对新数组进行修改
+            // todo 之前的数据深拷贝没有实现，因为拷贝的步骤不对导致。原步骤：1.先深拷贝得到新数组，2.对新数组筛选和修改。
+            //  区别在于：是先深拷贝再筛选、修改<—>还是先筛选、修改再深拷贝
+            const selRects = this.renderList.filter(ren => {
                 return ren.constructor.name != "SelectArea" && ren.selected
             })
-            selRects.forEach(rect => {
-                // debugger
+            let newSelRects=copyList(selRects) //数据深拷贝，不执行这一步会对源数据也进行修改。
+            newSelRects.forEach(rect => {
                 rect.left = rect.toax + this.contextPos.x
                 rect.top = rect.toay + this.contextPos.y
             })
-            console.log("contextPaste1--------", selRects)
-            this.renderList = rectList.concat(selRects)
+            console.log("contextPaste1--------", newSelRects)
+            // 将原数组和新数组进行拼接，重新赋值。
+            this.renderList = this.renderList.concat(newSelRects)
             console.log("contextPaste2--------", this.renderList)
-            resetCopy()
+            resetCopyView()
             // updateSelRect({}, false)
             deleteArea(this.renderList)
-            this.errorHintView.innerText="因为【JS数据深拷贝】没实现，会修改源数据。所以此功能实现有问题：1.源数据会丢失，2.重叠问题没心思实现，3.ctrl+c和ctrl+v也没心思实现。"
+            this.errorHintView.innerText = "深拷贝问题修复,还需要实现：2.重叠问题没心思实现，3.ctrl+c和ctrl+v也没心思实现。"
         })
     }
 }

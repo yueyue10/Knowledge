@@ -1,5 +1,10 @@
+class Widget {
+    constructor(ctx) {
+        this.ctx=ctx
+    }
+}
 //座位
-export class Rect {
+export class Rect extends Widget{
     constructor(ctx, {
         top = 0,
         left = 0,
@@ -7,7 +12,7 @@ export class Rect {
         height = 0,
         background = '#f4a41e'
     }, seat_text) {
-        this.ctx = ctx
+        super(ctx)
         this.top = top
         this.left = left
         this.width = width
