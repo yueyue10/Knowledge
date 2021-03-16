@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动画实战</title>
+    <style>
+        /* 清除浏览器默认边距 */
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            /* 这段代码是为了居中显示，不是重点，看不懂的话可以无视 */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* 添加背景图 */
+            background: url(http://img.mukewang.com/wiki/5eda029f08f198f513660768.jpg) center / cover;
+        }
+
+        .container {
+            width: 200px;
+            height: 200px;
+            background: #889B85;
+            /*background: #5a5a5a;*/
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .animate {
+            width: 84px;
+            height: 100px;
+            background: url(webp.webp);
+            background-position-x: -237px;
+            background-position-y: -342px;
+            /* 动画: 动画名(loading) 时长(0.6秒) 运行方式(step-end) 动画次数(无限) */
+            animation: loading 1s step-end infinite;
+        }
+
+        /* 定义动画：动画名(loading) */
+        @keyframes loading {
+            from {
+                width: 70px;
+                height: 100px;
+                background-position: -12px -24px
+            }
+            5% {
+                width: 70px;
+                height: 100px;
+                background-position: -81px -24px
+            }
+            10% {
+                width: 70px;
+                height: 100px;
+                background-position: -165px -24px
+            }
+            15% {
+                width: 70px;
+                height: 100px;
+                background-position: -241px -24px
+            }
+            20% {
+                width: 122px;
+                height: 100px;
+                background-position: -12px -131px
+            }
+            25% {
+                width: 122px;
+                height: 100px;
+                background-position: -125px -131px
+            }
+            30% {
+                width: 93px;
+                height: 100px;
+                background-position: -235px -131px
+            }
+            35% {
+                width: 93px;
+                height: 100px;
+                background-position-x: -12px;
+                background-position-y: -238px;
+            }
+            40% {
+                width: 79px;
+                height: 100px;
+                background-position-x: -90px;
+                background-position-y: -238px;
+            }
+            45% {
+                width: 68px;
+                height: 100px;
+                background-position-x: -154px;
+                background-position-y: -238px;
+            }
+            50% {
+                width: 68px;
+                height: 100px;
+                background-position-x: -212px;
+                background-position-y: -238px;
+            }
+            55% {
+                width: 65px;
+                height: 100px;
+                background-position-x: -89px;
+                background-position-y: -342px;
+            }
+            60% {
+                width: 88px;
+                height: 100px;
+                background-position-x: -151px;
+                background-position-y: -342px;
+            }
+            65% {
+                width: 84px;
+                height: 100px;
+                background-position-x: -237px;
+                background-position-y: -342px;
+            }
+            to {
+                width: 80px;
+                height: 100px;
+                background-position-x: -7px;
+                background-position-y: -342px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="animate"></div>
+</div>
+</body>
+</html>
