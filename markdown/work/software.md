@@ -15,6 +15,10 @@
 * TortoiseGit
 * Hbuilder
 * nat123 内网穿透
+* nginx
+* maven
+* navicat
+* docker
 
 
 
